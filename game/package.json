@@ -4,9 +4,9 @@
   "description": "Baer Project 2019 Exhibit for Jupiter Hall.",
   "main": "",
   "scripts": {
-    "dev": "parcel app/index.html",
-    "list": "npx @serialport/list",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "client": "parcel app/index.html",
+    "server": "node server/serial.js",
+    "list": "npx @serialport/list"
   },
   "keywords": [],
   "author": "",

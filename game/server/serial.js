@@ -1,3 +1,6 @@
+// constants
+const F_MULTIFACTOR = 1.0;
+
 // serial.js
 const SerialPort = require('serialport');
 const Readline = require('@serialport/parser-readline');
@@ -7,6 +10,7 @@ const WebSocket = require('ws');
 let SERIAL_P1 = null;
 let SERIAL_P2 = null;
 let SOCK_GAME = null;
+let c_paddle1 = 0;
 
 // configure serial port
 const SERIAL_PATH = '/dev/tty.usbmodem14201';
@@ -15,7 +19,18 @@ const parserP1 = new Readline();
 SERIAL_P1.pipe(parserP1);
 //
 parserP1.on('data', line => {
-  if (SOCK_GAME) SOCK_GAME.send(line);
+  let out = '';
+  let intPos = parseInt(line, 10);
+  let float = (intPos / 65536) * F_MULTIFACTOR;
+  // send to client if changed
+  if (c_paddle1 !== intPos) {
+    out += `PAD1\t${intPos}`;
+    if (SOCK_GAME) SOCK_GAME.send(intPos);
+    else out += ' (client offline)';
+    console.log(out);
+  }
+  // update last position
+  c_paddle1 = intPos;
 });
 // tell ARDUINO something happened
 SERIAL_P1.write('ARDUINO POWER ON\n');

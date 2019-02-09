@@ -1,5 +1,7 @@
 #define encoder0PinA  2
 #define encoder0PinB  3
+#define MAX 65535
+#define MIN 0
 
 volatile unsigned int encoder0Pos = 0;
 
@@ -15,64 +17,53 @@ void setup() {
 
 
   Serial.begin (115200);
-  Serial.println ("Hello");
+  Serial.println ("BP2019-ENCODER");
 }
 
 void loop() {
-  //Do stuff here
+  // Do stuff here
   Serial.println (encoder0Pos, DEC);
-  
+}
+
+int incrementPos() {
+  if (encoder0Pos<MAX) ++encoder0Pos;
+  return encoder0Pos;
+}
+
+int decrementPos() {
+  if (encoder0Pos>MIN) --encoder0Pos;
+  return encoder0Pos;
 }
 
 void doEncoderA() {
   // look for a low-to-high on channel A
   if (digitalRead(encoder0PinA) == HIGH) {
-
     // check channel B to see which way encoder is turning
-    if (digitalRead(encoder0PinB) == LOW) {
-      encoder0Pos = encoder0Pos + 1;         // CW
-    }
-    else {
-      encoder0Pos = encoder0Pos - 1;         // CCW
-    }
+    if (digitalRead(encoder0PinB) == LOW) incrementPos();
+    else decrementPos();
   }
-
-  else   // must be a high-to-low edge on channel A
+  // must be a high-to-low edge on channel A  
+  else 
   {
     // check channel B to see which way encoder is turning
-    if (digitalRead(encoder0PinB) == HIGH) {
-      encoder0Pos = encoder0Pos + 1;          // CW
-    }
-    else {
-      encoder0Pos = encoder0Pos - 1;          // CCW
-    }
+    if (digitalRead(encoder0PinB) == HIGH) incrementPos();
+    else decrementPos();
   }
   // Serial.println (encoder0Pos, DEC);
-  // use for debugging - remember to comment out
 }
 
 void doEncoderB() {
   // look for a low-to-high on channel B
   if (digitalRead(encoder0PinB) == HIGH) {
-
     // check channel A to see which way encoder is turning
-    if (digitalRead(encoder0PinA) == HIGH) {
-      encoder0Pos = encoder0Pos + 1;         // CW
-    }
-    else {
-      encoder0Pos = encoder0Pos - 1;         // CCW
-    }
+    if (digitalRead(encoder0PinA) == HIGH) incrementPos();
+    else decrementPos();
   }
-
   // Look for a high-to-low on channel B
-
-  else {
+  else 
+  {
     // check channel B to see which way encoder is turning
-    if (digitalRead(encoder0PinA) == LOW) {
-      encoder0Pos = encoder0Pos + 1;          // CW
-    }
-    else {
-      encoder0Pos = encoder0Pos - 1;          // CCW
-    }
+    if (digitalRead(encoder0PinA) == LOW) incrementPos();
+    else decrementPos();
   }
 }

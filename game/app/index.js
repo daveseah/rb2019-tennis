@@ -1,3 +1,7 @@
+// PONG source based on Max Wihlborg's YouTube tutorial,
+// https://www.youtube.com/watch?v=KApAJhkkqkA
+// https://github.com/maxwihlborg/youtube-tutorials/blob/master/pong/index.html
+
 var /**
    * Constants
    */
@@ -6,6 +10,10 @@ var /**
   pi = Math.PI,
   UpArrow = 38,
   DownArrow = 40,
+  /**
+   *  Hacked Input from Serial
+   */
+  PAD1 = null,
   /**
    * Game elements
    */
@@ -26,8 +34,14 @@ var /**
      * Update the position depending on pressed keys
      */
     update: function() {
+      // original code
       if (keystate[UpArrow]) this.y -= 7;
       if (keystate[DownArrow]) this.y += 7;
+      // HACKED INPUT
+      if (PAD1 !== null) {
+        this.y = PAD1;
+        PAD1 = null;
+      }
       // keep the paddle inside of the canvas
       this.y = Math.max(Math.min(this.y, HEIGHT - this.height), 0);
     },
@@ -228,5 +242,5 @@ connection.onerror = error => {
 };
 
 connection.onmessage = e => {
-  console.log(e.data);
+  PAD1 = parseInt(e.data, 10);
 };
