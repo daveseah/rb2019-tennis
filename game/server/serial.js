@@ -1,4 +1,5 @@
 // constants
+const SERIAL_PATH = '/dev/tty.usbmodem14201'; // run npm run list from terminal to see serial strings
 const F_MULTIFACTOR = 1.0;
 
 // serial.js
@@ -13,7 +14,6 @@ let SOCK_GAME = null;
 let c_paddle1 = 0;
 
 // configure serial port
-const SERIAL_PATH = '/dev/tty.usbmodem14201';
 SERIAL_P1 = new SerialPort(SERIAL_PATH, { baudRate: 115200 });
 const parserP1 = new Readline();
 SERIAL_P1.pipe(parserP1);

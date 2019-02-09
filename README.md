@@ -13,7 +13,17 @@ requirements: NodeJS 10.9
 
 ### Running the Test Server
 
-With arduino connected, ensure it's working by running `npm run server`. As you diddle the encoder, you should see number output in the terminal window.
+MODIFY `serial.js` with serial port path constant `SERIAL_PATH`:
+
+- Run `npm run list` in terminal to find your arduino's serial port path (tested in MacOS)
+- Update the constant, save
+
+RUN SERVER
+
+- With arduino connected, go to terminal and `npm run server`.
+- As you diddle the encoder, you should see number output in the terminal window.
+- If the Test Client isn't running, you'll see a "client offline" status message
+- The values are sent only if a change is detected
 
 ### Running the Test Client
 
