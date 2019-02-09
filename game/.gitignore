@@ -1,0 +1,9 @@
+# local git ignore for game directory
+
+# Ignore npm packaging
+/.node_modules
+/node_modules
+
+# Ignore generated files in output folder
+/dist
+/built

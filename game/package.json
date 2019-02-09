@@ -1,0 +1,19 @@
+{
+  "name": "baer-project-pong-2019",
+  "version": "1.0.0",
+  "description": "Baer Project 2019 Exhibit for Jupiter Hall.",
+  "main": "",
+  "scripts": {
+    "dev": "parcel app/index.html",
+    "list": "npx @serialport/list",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@serialport/parser-readline": "^2.0.2",
+    "serialport": "^7.1.4",
+    "ws": "^6.1.3"
+  }
+}
