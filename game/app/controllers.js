@@ -1,11 +1,13 @@
 const { HEIGHT, KEY_UP, KEY_DOWN } = require('./constants');
 const STATE = require('./gamestate');
 
+/// BASE CLASS: Paddle ////////////////////////////////////////////////////////
+/// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 class Paddle {
   constructor() {
     this.width = 20;
     this.height = 100;
-    this.x = null;
+    this.x = 0;
     this.y = (HEIGHT - this.height) / 2;
     this.type = 'paddle';
   }
@@ -22,6 +24,9 @@ class Paddle {
   }
 }
 
+/// CLASS: HUMAN PLAYER ///////////////////////////////////////////////////////
+/// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+/// inherits from Paddle
 class Player extends Paddle {
   constructor() {
     super();
@@ -36,6 +41,9 @@ class Player extends Paddle {
   }
 }
 
+/// CLASS: AI PLAYER //////////////////////////////////////////////////////////
+/// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+/// inherits from Paddle
 class AIPlayer extends Paddle {
   constructor() {
     super();
@@ -43,11 +51,13 @@ class AIPlayer extends Paddle {
     this.type = 'ai';
   }
   Update(state) {
-    let { bally, ballside } = state;
-    let desty = bally - (this.height - ballside) * 0.5;
+    let { bally, ballsize } = state;
+    let desty = bally - (this.height - ballsize) * 0.5;
     this.y += (desty - this.y) * 0.1;
     this.y = Math.max(Math.min(this.y, HEIGHT - this.height), 0);
   }
 }
 
+/// MODULE
+/// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 module.exports = { Paddle, Player, AIPlayer };

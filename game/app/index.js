@@ -2,83 +2,24 @@
 // https://www.youtube.com/watch?v=KApAJhkkqkA
 // https://github.com/maxwihlborg/youtube-tutorials/blob/master/pong/index.html
 
+// load controllers and piece classes
+const { Player, AIPlayer } = require('./controllers');
+const { Ball } = require('./pieces');
 const { WIDTH, HEIGHT, PI, KEY_UP, KEY_DOWN } = require('./constants');
 
+// drawing surfaces
 let canvas, ctx;
-let keystate, pad0;
 
-const { Player, AIPlayer } = require('./controllers');
+// global input triggers
+let keystate;
+let pad0 = 0;
 
+// create new players and pieces
 let PLAYER = new Player();
 let AI = new AIPlayer();
+let BALL = new Ball();
 
-let BALL = {
-  x: null,
-  y: null,
-  vel: null,
-  side: 20,
-  speed: 12
-};
-BALL.Serve = function(side) {
-  // set the x and y position
-  var r = Math.random();
-  this.x = side === 1 ? PLAYER.x + PLAYER.width : AI.x - this.side;
-  this.y = (HEIGHT - this.side) * r;
-  // calculate out-angle, higher/lower on the y-axis =>
-  // steeper angle
-  var phi = 0.1 * PI * (1 - 2 * r);
-  // set velocity direction and magnitude
-  this.vel = {
-    x: side * this.speed * Math.cos(phi),
-    y: this.speed * Math.sin(phi)
-  };
-};
-BALL.Update = function() {
-  // update position with current velocity
-  this.x += this.vel.x;
-  this.y += this.vel.y;
-  // check if out of the canvas in the y direction
-  if (0 > this.y || this.y + this.side > HEIGHT) {
-    // calculate and add the right offset, i.e. how far
-    // inside of the canvas the BALL is
-    var offset = this.vel.y < 0 ? 0 - this.y : HEIGHT - (this.y + this.side);
-    this.y += 2 * offset;
-    // mirror the y velocity
-    this.vel.y *= -1;
-  }
-  // helper function to check intesectiont between two
-  // axis aligned bounding boxex (AABB)
-  var AABBIntersect = function(ax, ay, aw, ah, bx, by, bw, bh) {
-    return ax < bx + bw && ay < by + bh && bx < ax + aw && by < ay + ah;
-  };
-  // check againts target paddle to check collision in x
-  // direction
-  var pdle = this.vel.x < 0 ? PLAYER : AI;
-  if (
-    AABBIntersect(pdle.x, pdle.y, pdle.width, pdle.height, this.x, this.y, this.side, this.side)
-  ) {
-    // set the x position and calculate reflection angle
-    this.x = pdle === PLAYER ? PLAYER.x + PLAYER.width : AI.x - this.side;
-    var n = (this.y + this.side - pdle.y) / (pdle.height + this.side);
-    var phi = 0.25 * PI * (2 * n - 1); // PI/4 = 45
-    // calculate smash value and update velocity
-    var smash = Math.abs(phi) > 0.2 * PI ? 1.5 : 1;
-    this.vel.x = smash * (pdle === PLAYER ? 1 : -1) * this.speed * Math.cos(phi);
-    this.vel.y = smash * this.speed * Math.sin(phi);
-  }
-  // reset the BALL when BALL outside of the canvas in the
-  // x direction
-  if (0 > this.x + this.side || this.x > WIDTH) {
-    this.Serve(pdle === PLAYER ? 1 : -1);
-  }
-};
-BALL.Draw = function() {
-  ctx.fillRect(this.x, this.y, this.side, this.side);
-};
-
-/**
- * Starts the game
- */
+// start the game
 function main() {
   // create, initiate and append game canvas
   canvas = document.createElement('canvas');
@@ -115,9 +56,9 @@ function init() {
  * Update all game objects
  */
 function update() {
-  BALL.Update();
+  BALL.Update({ PLAYER, AI });
   PLAYER.Update({ keystate, pad0 });
-  AI.Update({ bally: BALL.y, ballside: BALL.side });
+  AI.Update({ bally: BALL.y, ballsize: BALL.size });
   pad0 = null;
 }
 /**
@@ -127,7 +68,7 @@ function draw() {
   ctx.fillRect(0, 0, WIDTH, HEIGHT);
   ctx.save();
   ctx.fillStyle = '#fff';
-  BALL.Draw();
+  BALL.Draw(ctx);
   PLAYER.Draw(ctx);
   AI.Draw(ctx);
   // draw the net
@@ -149,7 +90,7 @@ const url = 'ws://localhost:8080';
 const connection = new WebSocket(url);
 
 connection.onopen = () => {
-  connection.send('REQUEST from BROWSER');
+  connection.send('client : open connection');
 };
 
 connection.onerror = error => {
@@ -157,5 +98,25 @@ connection.onerror = error => {
 };
 
 connection.onmessage = e => {
-  pad0 = parseInt(e.data, 10);
+  // currently no protocol
+  // expects an integer
+  const msg = e.data;
+  let val = parseInt(msg, 10);
+  if (!isNaN(val)) pad0 = val;
 };
+
+// hot module replacement override
+if (module.hot) {
+  // warn server that client is reloading
+  module.hot.dispose(function() {
+    connection.send('client : reloaded page');
+  });
+  // reload the entire page to keep multiple
+  // index.js instances from running until
+  // code is completely modularized
+  module.hot.accept(function() {
+    setTimeout(() => {
+      window.location.reload();
+    });
+  });
+}
