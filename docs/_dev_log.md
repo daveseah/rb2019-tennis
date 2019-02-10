@@ -34,6 +34,8 @@ I'm currently using Visual Studio Code as my IDE, with the following plugins ins
 - ESLint 1.8.0 - enforce linting rules interactively according to `.eslintrc.json`
 - Prettier - Code formatter 1.8.1 - enforce source code formatting according to `.prettierrc`
 
+I'm using nvm (node version manager)
+
 Next, I have to:
 
 - change the bundler so it launches a custom Express server

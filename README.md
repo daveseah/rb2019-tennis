@@ -42,7 +42,7 @@ If you have functioning hardware, you can change the source code to match your A
 
 RUN THE SERVER
 
-- Make sure you are in the `bp2019-pong/game` directory Terminal
+- Open terminal window, and make sure you are in the `bp2019-pong/game` directory
 - With Arduino connected, type `npm run server`.
 - As you diddle the encoder, you should see number output in the terminal window.
 - NOTE: If the Test Client isn't running, you'll see a "client offline" status message
@@ -52,7 +52,7 @@ RUN THE SERVER
 
 Open a SECOND TERMINAL WINDOW, then:
 
-- Make sure you are in the `bp2019-pong/game` directory Terminal
+- Make sure you are in the `bp2019-pong/game` directory
 - `npm run client`
 - Open Chrome and browse to `localhost:1234`
 - Twiddle the encoder knob to see if the paddle moves
