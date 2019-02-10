@@ -55,7 +55,7 @@ Open a SECOND TERMINAL WINDOW, then:
 
 - Make sure you are in the `bp2019-pong/game` directory
 - `npm run client`
-- Open Chrome and browse to `localhost:1234`
+- Open Chrome and browse to `localhost:3000`
 - Twiddle the encoder knob to see if the paddle moves
 
 To enter FULL SCREEN MODE, go to the Chrome browser's VIEW MENU and disable _Always Show Toolbar_ and _Always Show Bookmarks_, then choose _Full Screen Mode_.
