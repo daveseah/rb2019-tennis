@@ -15,18 +15,19 @@ Some code and wiring inspired by http://en.wikiversity.org/wiki/User:Dstaub/robo
 #define led 9
 #define led2 10
 
-void setup() {
-  Serial.begin (9600);
+void setup()
+{
+  Serial.begin(9600);
   pinMode(trigPin, OUTPUT);
   pinMode(echoPin, INPUT);
   pinMode(led, OUTPUT);
   pinMode(led2, OUTPUT);
   Serial.begin(9600);
-  Serial.println("\nDISTANCE"); 
-  
+  Serial.println("\nDISTANCE");
 }
 
-void loop() {
+void loop()
+{
   long duration, distance;
   digitalWrite(trigPin, LOW);
   delayMicroseconds(2);
@@ -35,20 +36,23 @@ void loop() {
   digitalWrite(trigPin, LOW);
 
   duration = pulseIn(echoPin, HIGH);
-  distance = (duration/2) / 29.1;
+  distance = (duration / 2) / 29.1;
 
   Serial.print("dur: ");
   Serial.print(duration);
   Serial.print("\t");
-  
-  if (distance >= 200 || distance <= 0) {
+
+  if (distance >= 200 || distance <= 0)
+  {
     Serial.println("Out of range");
-    digitalWrite(led,LOW);
-  } else {
+    digitalWrite(led, LOW);
+  }
+  else
+  {
     Serial.print(distance);
     Serial.println(" cm");
-    digitalWrite(led,HIGH);
+    digitalWrite(led, HIGH);
   }
-   
+
   delay(10);
 }
