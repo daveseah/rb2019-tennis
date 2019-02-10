@@ -2,51 +2,15 @@
 // https://www.youtube.com/watch?v=KApAJhkkqkA
 // https://github.com/maxwihlborg/youtube-tutorials/blob/master/pong/index.html
 
-const WIDTH = 1600;
-const HEIGHT = 950;
-const pi = Math.PI;
-const KEY_UP = 38;
-const KEY_DOWN = 40;
+const { WIDTH, HEIGHT, PI, KEY_UP, KEY_DOWN } = require('./constants');
 
-let IN_PAD0 = null;
+let canvas, ctx;
+let keystate, pad0;
 
-let canvas, ctx, keystate;
+const { Player, AIPlayer } = require('./controllers');
 
-let PLAYER = {
-  x: null,
-  y: null,
-  width: 20,
-  height: 100
-};
-PLAYER.Update = function() {
-  if (keystate[KEY_UP]) this.y -= 7;
-  if (keystate[KEY_DOWN]) this.y += 7;
-  if (IN_PAD0 !== null) {
-    this.y = IN_PAD0;
-    IN_PAD0 = null;
-  }
-};
-PLAYER.Draw = function() {
-  ctx.fillRect(this.x, this.y, this.width, this.height);
-};
-
-let AI = {
-  x: null,
-  y: null,
-  width: 20,
-  height: 100
-};
-AI.Update = function() {
-  // calculate ideal position
-  var desty = BALL.y - (this.height - BALL.side) * 0.5;
-  // ease the movement towards the ideal position
-  this.y += (desty - this.y) * 0.1;
-  // keep the paddle inside of the canvas
-  this.y = Math.max(Math.min(this.y, HEIGHT - this.height), 0);
-};
-AI.Draw = function() {
-  ctx.fillRect(this.x, this.y, this.width, this.height);
-};
+let PLAYER = new Player();
+let AI = new AIPlayer();
 
 let BALL = {
   x: null,
@@ -62,7 +26,7 @@ BALL.Serve = function(side) {
   this.y = (HEIGHT - this.side) * r;
   // calculate out-angle, higher/lower on the y-axis =>
   // steeper angle
-  var phi = 0.1 * pi * (1 - 2 * r);
+  var phi = 0.1 * PI * (1 - 2 * r);
   // set velocity direction and magnitude
   this.vel = {
     x: side * this.speed * Math.cos(phi),
@@ -96,9 +60,9 @@ BALL.Update = function() {
     // set the x position and calculate reflection angle
     this.x = pdle === PLAYER ? PLAYER.x + PLAYER.width : AI.x - this.side;
     var n = (this.y + this.side - pdle.y) / (pdle.height + this.side);
-    var phi = 0.25 * pi * (2 * n - 1); // pi/4 = 45
+    var phi = 0.25 * PI * (2 * n - 1); // PI/4 = 45
     // calculate smash value and update velocity
-    var smash = Math.abs(phi) > 0.2 * pi ? 1.5 : 1;
+    var smash = Math.abs(phi) > 0.2 * PI ? 1.5 : 1;
     this.vel.x = smash * (pdle === PLAYER ? 1 : -1) * this.speed * Math.cos(phi);
     this.vel.y = smash * this.speed * Math.sin(phi);
   }
@@ -143,8 +107,6 @@ function main() {
  * Initatite game objects and set start positions
  */
 function init() {
-  PLAYER.x = PLAYER.width;
-  PLAYER.y = (HEIGHT - PLAYER.height) / 2;
   AI.x = WIDTH - (PLAYER.width + AI.width);
   AI.y = (HEIGHT - AI.height) / 2;
   BALL.Serve(1);
@@ -154,8 +116,9 @@ function init() {
  */
 function update() {
   BALL.Update();
-  PLAYER.Update();
-  AI.Update();
+  PLAYER.Update({ keystate, pad0 });
+  AI.Update({ bally: BALL.y, ballside: BALL.side });
+  pad0 = null;
 }
 /**
  * Clear canvas and draw all game objects and net
@@ -165,8 +128,8 @@ function draw() {
   ctx.save();
   ctx.fillStyle = '#fff';
   BALL.Draw();
-  PLAYER.Draw();
-  AI.Draw();
+  PLAYER.Draw(ctx);
+  AI.Draw(ctx);
   // draw the net
   var w = 4;
   var x = (WIDTH - w) * 0.5;
@@ -194,5 +157,5 @@ connection.onerror = error => {
 };
 
 connection.onmessage = e => {
-  IN_PAD0 = parseInt(e.data, 10);
+  pad0 = parseInt(e.data, 10);
 };
