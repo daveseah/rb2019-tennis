@@ -1,18 +1,22 @@
-// constants
-// const SERIAL_PATH = '/dev/tty.usbmodem14201'; // run npm run list from terminal to see serial strings
-const SERIAL_PATH = '/dev/cu.usbserial-1410'; // run npm run list from terminal to see serial strings
+const CONFIG = {
+  SRI: { SERIAL_PATH: '/dev/tty.usbmodem14101', INPUT_SCALE: 1 },
+  EXHIBIT: { SERIAL_PATH: '/dev/cu.usbserial-1410', INPUT_SCALE: 0.3 }
+};
 
-const F_MULTIFACTOR = 0.05;
+// select configuration
+const { SERIAL_PATH, INPUT_SCALE } = CONFIG['SRI'];
 
-// serial.js
+// libraries
 const SerialPort = require('serialport');
 const Readline = require('@serialport/parser-readline');
 const WebSocket = require('ws');
 
-//
+// communication
 let SERIAL_P1 = null;
 let SERIAL_P2 = null;
 let SOCK_GAME = null;
+
+// io values
 let c_paddle1 = 0;
 
 // configure serial port
@@ -22,8 +26,9 @@ SERIAL_P1.pipe(parserP1);
 //
 parserP1.on('data', line => {
   let out = '';
-  let intPos = parseInt(line, 10) * F_MULTIFACTOR;
-  let float = (intPos / 65536) * F_MULTIFACTOR;
+  let intPos = parseInt(line, 10) * INPUT_SCALE;
+  if (isNaN(intPos)) intPos = 0;
+  let float = (intPos / 65536) * INPUT_SCALE;
   // send to client if changed
   if (c_paddle1 !== intPos) {
     out += `PAD1\t${intPos}`;
@@ -46,8 +51,6 @@ wss.on('connection', ws => {
   SOCK_GAME.send('CONNECT ACK from NODE');
   //
   SOCK_GAME.on('message', message => {
-    console.log(`Received message => ${message}`);
+    console.log(`RECEIVED: '${message}'`);
   });
 });
-
-// start parsing serial and send to browser
