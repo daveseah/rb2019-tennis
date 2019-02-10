@@ -27,4 +27,11 @@ RUN SERVER
 
 ### Running the Test Client
 
-Open a second terminal window, run `npm run client` and point Chrome to `localhost:1234`. Optionally open the Javascript console. Twiddle the encoder knob to see if the paddle moves.
+Open a second terminal window, then:
+
+- `npm run client`
+- Open Chrome and go to `localhost:1234`
+- Twiddle the encoder knob to see if the paddle moves
+
+To enter FULL SCREEN MODE, go to the Chrome browser's VIEW MENU and disable _Always Show Toolbar_ and _Always Show Bookmarks_, then choose _Full Screen Mode_.
+The MacOS shortcut for full screen mode is `CTRL-CMD-F`.
