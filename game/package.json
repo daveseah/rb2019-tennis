@@ -4,15 +4,17 @@
   "description": "Baer Project 2019 Exhibit for Jupiter Hall.",
   "main": "",
   "scripts": {
-    "client": "parcel app/index.html",
+    "client": "./node_modules/parcel-bundler/bin/cli.js app/index.html",
     "server": "node server/serial.js",
-    "list": "npx @serialport/list"
+    "list:ports": "./node_modules/@serialport/list/lib/list.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@serialport/list": "^1.1.4",
     "@serialport/parser-readline": "^2.0.2",
+    "parcel-bundler": "^1.11.0",
     "serialport": "^7.1.4",
     "ws": "^6.1.3"
   }

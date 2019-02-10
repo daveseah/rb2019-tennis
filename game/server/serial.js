@@ -1,6 +1,8 @@
 // constants
-const SERIAL_PATH = '/dev/tty.usbmodem14201'; // run npm run list from terminal to see serial strings
-const F_MULTIFACTOR = 1.0;
+// const SERIAL_PATH = '/dev/tty.usbmodem14201'; // run npm run list from terminal to see serial strings
+const SERIAL_PATH = '/dev/cu.usbserial-1410'; // run npm run list from terminal to see serial strings
+
+const F_MULTIFACTOR = 0.05;
 
 // serial.js
 const SerialPort = require('serialport');
@@ -20,7 +22,7 @@ SERIAL_P1.pipe(parserP1);
 //
 parserP1.on('data', line => {
   let out = '';
-  let intPos = parseInt(line, 10);
+  let intPos = parseInt(line, 10) * F_MULTIFACTOR;
   let float = (intPos / 65536) * F_MULTIFACTOR;
   // send to client if changed
   if (c_paddle1 !== intPos) {

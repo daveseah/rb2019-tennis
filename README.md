@@ -7,16 +7,16 @@ CURRENT STATUS: simple communication proof of concept
 requirements: NodeJS 10.9
 
 - flash arduino with serial encoder with code from `arduino/serial-encoder`
-- open terminal and `cd bp2019-pong/game`
-- `npm install -g parcel-bundler`
+- open terminal
+- `cd bp2019-pong/game`
 - `npm ci`
 
 ### Running the Test Server
 
 MODIFY `serial.js` with serial port path constant `SERIAL_PATH`:
 
-- Run `npm run list` in terminal to find your arduino's serial port path (tested in MacOS)
-- Update the constant, save
+- Run `npm run list:ports` in terminal to find your arduino's serial port path (tested in MacOS)
+- Update the constant, then save the changes
 
 RUN SERVER
 
