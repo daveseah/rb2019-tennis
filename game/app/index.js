@@ -1,115 +1,81 @@
-// PONG source based on Max Wihlborg's YouTube tutorial,
-// https://www.youtube.com/watch?v=KApAJhkkqkA
-// https://github.com/maxwihlborg/youtube-tutorials/blob/master/pong/index.html
+/// LIBRARIES /////////////////////////////////////////////////////////////////
+/// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+const GAME = require('./game');
 
-// load controllers and piece classes
-const { Player, AIPlayer } = require('./controllers');
-const { Ball } = require('./pieces');
-const { WIDTH, HEIGHT, PI, KEY_UP, KEY_DOWN } = require('./constants');
-
+/// CONSTANTS and GLOBALS /////////////////////////////////////////////////////
+/// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // drawing surfaces
-let canvas, ctx;
+let m_canvas, m_ctx;
+let m_keystate;
+// socket connections
+const m_socket_url = 'ws://localhost:8080';
+let m_socket;
+// module-wide shared constants
+const { WIDTH, HEIGHT } = require('./constants');
 
-// global input triggers
-let keystate;
-let pad0 = 0;
-
-// create new players and pieces
-let PLAYER = new Player();
-let AI = new AIPlayer();
-let BALL = new Ball();
-
-// start the game
-function main() {
+/// GAME CONTROLLER ///////////////////////////////////////////////////////////
+/// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+/*/ Initialize Game Playfields and keyboard inputs, and connect to server
+/*/
+function BootSystem() {
   // create, initiate and append game canvas
-  canvas = document.createElement('canvas');
-  canvas.width = WIDTH;
-  canvas.height = HEIGHT;
-  ctx = canvas.getContext('2d');
-  document.body.appendChild(canvas);
-  keystate = {};
+  m_canvas = document.createElement('canvas');
+  m_canvas.width = WIDTH;
+  m_canvas.height = HEIGHT;
+  m_ctx = m_canvas.getContext('2d');
+  document.body.appendChild(m_canvas);
   // keep track of keyboard presses
+  m_keystate = {};
   document.addEventListener('keydown', function(evt) {
-    keystate[evt.keyCode] = true;
+    m_keystate[evt.keyCode] = true;
+    GAME.SetInputs(m_keystate);
   });
   document.addEventListener('keyup', function(evt) {
-    delete keystate[evt.keyCode];
+    delete m_keystate[evt.keyCode];
+    GAME.SetInputs(m_keystate);
   });
-  init(); // initiate game objects
-  // game loop function
-  var loop = function() {
-    update();
-    draw();
-    window.requestAnimationFrame(loop, canvas);
+  // create socket connection to server
+  m_socket = new WebSocket(m_socket_url);
+  // case 1: run game on successful connection
+  m_socket.onopen = () => {
+    m_socket.send('client : open connection');
+    InitGame();
+    StepGame();
   };
-  window.requestAnimationFrame(loop, canvas);
+  // case 2: server isn't running, so alert and retry
+  m_socket.onerror = error => {
+    console.log(`WebSocket error:`, error);
+  };
+  // case 3: received a control from server
+  m_socket.onmessage = e => {
+    // HACK: expects an integer; ignore non numbers
+    const msg = e.data;
+    let val = parseInt(msg, 10);
+    if (!isNaN(val)) GAME.SetInputs({ pad0: val });
+  };
 }
-/**
- * Initatite game objects and set start positions
- */
-function init() {
-  AI.x = WIDTH - (PLAYER.width + AI.width);
-  AI.y = (HEIGHT - AI.height) / 2;
-  BALL.Serve(1);
+/// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+/*/ Initialize game data structures
+/*/
+function InitGame() {
+  // initiate game objects
+  GAME.Init();
 }
-/**
- * Update all game objects
- */
-function update() {
-  BALL.Update({ PLAYER, AI });
-  PLAYER.Update({ keystate, pad0 });
-  AI.Update({ bally: BALL.y, ballsize: BALL.size });
-  pad0 = null;
+/// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+/*/ Start game loop
+/*/
+function StepGame() {
+  GAME.Update();
+  GAME.Draw(m_ctx);
+  window.requestAnimationFrame(StepGame, m_canvas);
 }
-/**
- * Clear canvas and draw all game objects and net
- */
-function draw() {
-  ctx.fillRect(0, 0, WIDTH, HEIGHT);
-  ctx.save();
-  ctx.fillStyle = '#fff';
-  BALL.Draw(ctx);
-  PLAYER.Draw(ctx);
-  AI.Draw(ctx);
-  // draw the net
-  var w = 4;
-  var x = (WIDTH - w) * 0.5;
-  var y = 0;
-  var step = HEIGHT / 20; // how many net segments
-  while (y < HEIGHT) {
-    ctx.fillRect(x, y + step * 0.25, w, step * 0.5);
-    y += step;
-  }
-  ctx.restore();
-}
-// start and run the game
-main();
 
-// websockets
-const url = 'ws://localhost:8080';
-const connection = new WebSocket(url);
-
-connection.onopen = () => {
-  connection.send('client : open connection');
-};
-
-connection.onerror = error => {
-  console.log(`WebSocket error:`, error);
-};
-
-connection.onmessage = e => {
-  // currently no protocol
-  // expects an integer
-  const msg = e.data;
-  let val = parseInt(msg, 10);
-  if (!isNaN(val)) pad0 = val;
-};
-
-// hot module replacement override
+/// DEV: LIVE RELOADING ///////////////////////////////////////////////////////
+/// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 if (module.hot) {
   // warn server that client is reloading
   module.hot.dispose(function() {
-    connection.send('client : reloaded page');
+    m_socket.send('client : reloaded page');
   });
   // reload the entire page to keep multiple
   // index.js instances from running until
@@ -120,3 +86,7 @@ if (module.hot) {
     });
   });
 }
+
+/// START THE GAME ////////////////////////////////////////////////////////////
+/// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+BootSystem();

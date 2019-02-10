@@ -5,19 +5,20 @@ const STATE = require('./gamestate');
 /// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 class Paddle {
   constructor() {
+    this.type = 'paddle';
     this.width = 20;
     this.height = 100;
     this.x = 0;
     this.y = (HEIGHT - this.height) / 2;
-    this.type = 'paddle';
   }
   Update(state) {
     const { keystate, pad0, pad1 } = state;
-    // override
+    // keystate is an array indexed by charcode
+    // pad0 is player 1 (left)
+    // pad1 is player 2 (right)
   }
   Draw(ctx) {
     ctx.fillRect(this.x, this.y, this.width, this.height);
-    // console.log(this.x, this.y, this.width, this.height);
   }
   Set(props) {
     this.x = props.x;
@@ -30,14 +31,16 @@ class Paddle {
 class Player extends Paddle {
   constructor() {
     super();
-    this.x = this.width;
     this.type = 'human';
+    this.x = this.width;
   }
   Update(state) {
     const { keystate, pad0, pad1 } = state;
-    if (keystate[KEY_UP]) this.y -= 7;
-    if (keystate[KEY_DOWN]) this.y += 7;
-    if (pad0 !== null) this.y = pad0;
+    if (keystate) {
+      if (keystate[KEY_UP]) this.y -= 7;
+      if (keystate[KEY_DOWN]) this.y += 7;
+    }
+    if (pad0 && pad0 !== null) this.y = pad0;
   }
 }
 
