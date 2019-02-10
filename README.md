@@ -36,6 +36,7 @@ CONFIGURATION
 
 If you have functioning hardware, you can change the source code to match your Arduino configuration.
 
+- Make sure you are in the `bp2019-pong/game` directory
 - In the terminal, `npm run list:ports` to see the list of available serial ports
 - Find the _serial port path_ for your arduino board and copy it to the clipboard.
 - Modify the file `server/serial.js` so the constant `SERIAL_PATH` is set to the serial port path.
