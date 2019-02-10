@@ -1,5 +1,6 @@
 #define encoder0PinA  2
 #define encoder0PinB  3
+#define homeswitch0   4
 #define MAX 65535
 #define MIN 0
 
@@ -8,6 +9,7 @@ volatile unsigned int encoder0Pos = 0;
 void setup() {
   pinMode(encoder0PinA, INPUT);
   pinMode(encoder0PinB, INPUT);
+  pinMode(homeswitch0, INPUT);
 
   // encoder pin on interrupt 0 (pin 2)
   attachInterrupt(0, doEncoderA, CHANGE);
@@ -22,6 +24,9 @@ void setup() {
 
 void loop() {
   // Do stuff here
+  if (digitalRead(homeswitch0) == LOW) {
+    encoder0Pos = 0;
+  }
   Serial.println (encoder0Pos, DEC);
 }
 
