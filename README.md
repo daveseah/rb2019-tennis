@@ -1,6 +1,10 @@
 ## BP2019 Jupiter Hall Pong Exhibit
 
-CURRENT STATUS: simple communication proof of concept
+CURRENT PROGRESS:
+
+- simple communication proof of concept
+- refactored pong sample source into modular JS
+- two player self-playing mode with paddle 0 override
 
 ### First Time Installation
 
