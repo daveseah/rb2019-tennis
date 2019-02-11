@@ -20,14 +20,14 @@ class Ball {
     if (typeof side !== 'number') throw Error('arg1 should be 1 or -1');
     // set the x and y position
     var r = Math.random();
-    this.x = side === 1 ? this.size : WIDTH - this.size;
+    this.x = side < 0 ? this.size : WIDTH - this.size;
     this.y = (HEIGHT - this.size) * r;
     // calculate out-angle, higher/lower on the y-axis =>
     // steeper angle
     var phi = 0.1 * PI * (1 - 2 * r);
     // set velocity direction and magnitude
     this.vel = {
-      x: side * this.speed * Math.cos(phi),
+      x: -side * this.speed * Math.cos(phi),
       y: this.speed * Math.sin(phi)
     };
   }
@@ -63,7 +63,11 @@ class Ball {
     // reset the BALL when BALL outside of the canvas in the
     // x direction
     if (0 > this.x + this.size || this.x > WIDTH) {
-      this.Serve(pdle === P1 ? 1 : -1);
+      if (pdle === P1) {
+        return 'WIN P2';
+      } else {
+        return 'WIN P1';
+      }
     }
   }
   Draw(ctx) {

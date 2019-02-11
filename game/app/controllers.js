@@ -1,14 +1,17 @@
-const { HEIGHT, KEY_UP, KEY_DOWN, BALL_SIZE } = require('./constants');
-const STATE = require('./gamestate');
+const { WIDTH, HEIGHT, KEY_UP, KEY_DOWN, BALL_SIZE } = require('./constants');
 
 /// CLASS: Paddle /////////////////////////////////////////////////////////////
 /// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 class Paddle {
-  constructor() {
-    this.width = 20;
+  constructor(options) {
+    let { side } = options;
+    this.width = BALL_SIZE;
     this.height = 100;
-    this.x = 0;
+    this.side = side;
     this.y = (HEIGHT - this.height) / 2;
+    if (this.side === 0) throw Error('must pick side');
+    if (this.side < 0) this.x = Math.abs(this.side) * BALL_SIZE;
+    if (this.side > 0) this.x = WIDTH - Math.abs(this.side * 2) * BALL_SIZE;
   }
   Update(state) {
     const { keystate, pad0, pad1 } = state;
@@ -19,44 +22,29 @@ class Paddle {
   Draw(ctx) {
     ctx.fillRect(this.x, this.y, this.width, this.height);
   }
-  Set(props) {
-    this.x = props.x;
-  }
 }
 
 /// CLASS: HUMAN PLAYER ///////////////////////////////////////////////////////
 /// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 class Player extends Paddle {
-  constructor(side = 0) {
-    super();
-    this.side = side;
+  constructor(side) {
+    super(side);
   }
   Update(state) {
-    const { keystate, paddle } = state;
+    const { keystate, paddle, ball, autotrack = 0.1 } = state;
     if (keystate) {
       if (keystate[KEY_UP]) this.y -= 7;
       if (keystate[KEY_DOWN]) this.y += 7;
+    } else if (paddle && paddle !== null) {
+      this.y = Math.max(Math.min(paddle, HEIGHT - this.height), 0);
+    } else if (ball) {
+      let desty = ball.y - (this.height - BALL_SIZE) * 0.5;
+      this.y += (desty - this.y) * autotrack;
+      this.y = Math.max(Math.min(this.y, HEIGHT - this.height), 0);
     }
-    if (paddle && paddle !== null) this.y = paddle;
-  }
-}
-
-/// CLASS: AI PLAYER //////////////////////////////////////////////////////////
-/// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-/// inherits from Paddle
-class AIPlayer extends Paddle {
-  constructor() {
-    super();
-    this.x = this.width;
-  }
-  Update(state) {
-    let { paddle } = state;
-    let desty = paddle - (this.height - BALL_SIZE) * 0.5;
-    this.y += (desty - this.y) * 0.1;
-    this.y = Math.max(Math.min(this.y, HEIGHT - this.height), 0);
   }
 }
 
 /// MODULE
 /// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-module.exports = { Paddle, Player, AIPlayer };
+module.exports = { Paddle, Player };

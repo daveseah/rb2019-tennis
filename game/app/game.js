@@ -1,18 +1,29 @@
-// PONG source based on Max Wihlborg's YouTube tutorial,
-// https://www.youtube.com/watch?v=KApAJhkkqkA
-// https://github.com/maxwihlborg/youtube-tutorials/blob/master/pong/index.html
+/*///////////////////////////////// ABOUT \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*\
 
-// load controllers and piece classes
+  PONG source based on Max Wihlborg's YouTube tutorial,
+  https://www.youtube.com/watch?v=KApAJhkkqkA
+  https://github.com/maxwihlborg/youtube-tutorials/blob/master/pong/index.html
+
+\*\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ * /////////////////////////////////////*/
+
+/// LOAD CLASSES //////////////////////////////////////////////////////////////
+/// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 const { Player, AIPlayer } = require('./controllers');
 const { Ball } = require('./ball');
-const { WIDTH, HEIGHT } = require('./constants');
+const { WIDTH, HEIGHT, END_SCORE, NET_WIDTH } = require('./constants');
 
-// global input triggers
+/// GLOBAL INPUT STATE and SCORE //////////////////////////////////////////////
+/// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 let INPUTS = {};
+let SCORES = {
+  P1: 0,
+  P2: 0
+};
 
-// create new players and pieces
-let P1 = new Player();
-let P2 = new AIPlayer();
+/// CREATE PIECES /////////////////////////////////////////////////////////////
+/// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+let P1 = new Player({ side: -1 });
+let P2 = new Player({ side: 1 });
 let BALL = new Ball();
 
 /// SET INPUT /////////////////////////////////////////////////////////////////
@@ -20,24 +31,29 @@ let BALL = new Ball();
 function SetInputs(input) {
   INPUTS.keystate = input.keystate;
   INPUTS.pad1 = input.pad1;
+  INPUTS.pad2 = input.pad2;
 }
 
 /// INIT //////////////////////////////////////////////////////////////////////
 /// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 function Init() {
-  P2.x = WIDTH - (P1.width + P2.width);
-  P2.y = (HEIGHT - P2.height) / 2;
-  BALL.Serve(1);
+  INPUTS = {};
+  EraseScore();
+}
+
+/// START //////////////////////////////////////////////////////////////////////
+/// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+function Start(side = -1) {
+  BALL.Serve(side);
 }
 
 /// UPDATE ////////////////////////////////////////////////////////////////////
 /// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 function Update() {
-  BALL.Update({ P1, P2 });
-  //  P1.Update({ paddle: INPUTS.pad0, keystate: INPUTS.keystate });
-  P1.Update({ paddle: BALL.y });
-  P2.Update({ paddle: BALL.y });
-  INPUTS.pad1 = null;
+  let status = BALL.Update({ P1, P2 });
+  if (status) ScoreKeeper(status);
+  P1.Update({ paddle: INPUTS.pad1, ball: BALL, autotrack: 0.01 });
+  P2.Update({ paddle: INPUTS.pad2, ball: BALL, autotrack: 0.1 });
 }
 
 /// DRAW //////////////////////////////////////////////////////////////////////
@@ -50,7 +66,7 @@ function Draw(ctx) {
   P1.Draw(ctx);
   P2.Draw(ctx);
   // draw the net
-  var w = 4;
+  var w = NET_WIDTH;
   var x = (WIDTH - w) * 0.5;
   var y = 0;
   var step = HEIGHT / 20; // how many net segments
@@ -61,11 +77,56 @@ function Draw(ctx) {
   ctx.restore();
 }
 
+/// SCORE //////////////////////////////////////////////////////////////////////
+function ScoreKeeper(status) {
+  switch (status) {
+    case 'WIN P1':
+      Score('P1');
+      Start(1);
+      break;
+    case 'WIN P2':
+      Score('P2');
+      Start(-1);
+      break;
+    default:
+      if (status) console.log(status);
+  }
+}
+/// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+function Score(player) {
+  switch (player) {
+    case 'P1':
+    case 'P2':
+      if (SCORES[player] < END_SCORE) {
+        SCORES[player]++;
+        console.log(`POINT ${player}`, SCORES);
+      }
+      break;
+    default:
+      throw Error(`Unknown player '${player}'`);
+  }
+  // check for clear score end of game
+  let winner;
+  Object.entries(SCORES).forEach(([key, val]) => {
+    if (val >= END_SCORE) winner = key;
+  });
+  if (winner) {
+    console.log(`WINNER ${winner}`, SCORES);
+    Init();
+    Start();
+  }
+}
+/// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+function EraseScore() {
+  SCORES = { P1: 0, P2: 0 };
+}
+
 /// MODULE ////////////////////////////////////////////////////////////////////
 /// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 module.exports = {
   SetInputs,
   Init,
+  Start,
   Update,
   Draw
 };

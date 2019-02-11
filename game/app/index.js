@@ -58,8 +58,10 @@ function BootSystem() {
 /*/ Initialize game data structures
 /*/
 function InitGame() {
-  // initiate game objects
+  // initiate data structures
   GAME.Init();
+  // initiate runtime
+  GAME.Start();
 }
 /// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 /*/ Start game loop
