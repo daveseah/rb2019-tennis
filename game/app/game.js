@@ -4,15 +4,15 @@
 
 // load controllers and piece classes
 const { Player, AIPlayer } = require('./controllers');
-const { Ball } = require('./pieces');
+const { Ball } = require('./ball');
 const { WIDTH, HEIGHT } = require('./constants');
 
 // global input triggers
 let INPUTS = {};
 
 // create new players and pieces
-let PLAYER = new Player();
-let AI = new AIPlayer();
+let P1 = new Player();
+let P2 = new AIPlayer();
 let BALL = new Ball();
 
 /// SET INPUT /////////////////////////////////////////////////////////////////
@@ -25,17 +25,17 @@ function SetInputs(input) {
 /// INIT //////////////////////////////////////////////////////////////////////
 /// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 function Init() {
-  AI.x = WIDTH - (PLAYER.width + AI.width);
-  AI.y = (HEIGHT - AI.height) / 2;
+  P2.x = WIDTH - (P1.width + P2.width);
+  P2.y = (HEIGHT - P2.height) / 2;
   BALL.Serve(1);
 }
 
 /// UPDATE ////////////////////////////////////////////////////////////////////
 /// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 function Update() {
-  BALL.Update({ PLAYER, AI });
-  PLAYER.Update(INPUTS);
-  AI.Update({ bally: BALL.y, ballsize: BALL.size });
+  BALL.Update({ P1, P2 });
+  P1.Update({ paddle: INPUTS.pad0, keystate: INPUTS.keystate });
+  P2.Update({ bally: BALL.y, ballsize: BALL.size });
   INPUTS.pad0 = null;
 }
 
@@ -46,8 +46,8 @@ function Draw(ctx) {
   ctx.save();
   ctx.fillStyle = '#fff';
   BALL.Draw(ctx);
-  PLAYER.Draw(ctx);
-  AI.Draw(ctx);
+  P1.Draw(ctx);
+  P2.Draw(ctx);
   // draw the net
   var w = 4;
   var x = (WIDTH - w) * 0.5;

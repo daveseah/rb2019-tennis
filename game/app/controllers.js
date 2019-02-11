@@ -1,11 +1,10 @@
 const { HEIGHT, KEY_UP, KEY_DOWN } = require('./constants');
 const STATE = require('./gamestate');
 
-/// BASE CLASS: Paddle ////////////////////////////////////////////////////////
+/// CLASS: Paddle /////////////////////////////////////////////////////////////
 /// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 class Paddle {
   constructor() {
-    this.type = 'paddle';
     this.width = 20;
     this.height = 100;
     this.x = 0;
@@ -27,20 +26,18 @@ class Paddle {
 
 /// CLASS: HUMAN PLAYER ///////////////////////////////////////////////////////
 /// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-/// inherits from Paddle
 class Player extends Paddle {
-  constructor() {
+  constructor(side = 0) {
     super();
-    this.type = 'human';
-    this.x = this.width;
+    this.side = side;
   }
   Update(state) {
-    const { keystate, pad0, pad1 } = state;
+    const { keystate, paddle } = state;
     if (keystate) {
       if (keystate[KEY_UP]) this.y -= 7;
       if (keystate[KEY_DOWN]) this.y += 7;
     }
-    if (pad0 && pad0 !== null) this.y = pad0;
+    if (paddle && paddle !== null) this.y = paddle;
   }
 }
 

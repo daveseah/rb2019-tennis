@@ -8,7 +8,6 @@ function AABBIntersect(ax, ay, aw, ah, bx, by, bw, bh) {
 
 /// CLASS: Ball ///////////////////////////////////////////////////////////////
 /// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-/// inherits from Paddle
 class Ball {
   constructor() {
     this.size = 20;
@@ -33,7 +32,7 @@ class Ball {
     };
   }
   Update(state) {
-    let { PLAYER, AI } = state;
+    let { P1, P2 } = state;
     // update position with current velocity
     this.x += this.vel.x;
     this.y += this.vel.y;
@@ -48,23 +47,23 @@ class Ball {
     }
     // check againts target paddle to check collision in x
     // direction
-    var pdle = this.vel.x < 0 ? PLAYER : AI;
+    var pdle = this.vel.x < 0 ? P1 : P2;
     if (
       AABBIntersect(pdle.x, pdle.y, pdle.width, pdle.height, this.x, this.y, this.size, this.size)
     ) {
       // set the x position and calculate reflection angle
-      this.x = pdle === PLAYER ? PLAYER.x + PLAYER.width : AI.x - this.size;
+      this.x = pdle === P1 ? P1.x + P1.width : P2.x - this.size;
       var n = (this.y + this.size - pdle.y) / (pdle.height + this.size);
       var phi = 0.25 * PI * (2 * n - 1); // PI/4 = 45
       // calculate smash value and update velocity
       var smash = Math.abs(phi) > 0.2 * PI ? 1.5 : 1;
-      this.vel.x = smash * (pdle === PLAYER ? 1 : -1) * this.speed * Math.cos(phi);
+      this.vel.x = smash * (pdle === P1 ? 1 : -1) * this.speed * Math.cos(phi);
       this.vel.y = smash * this.speed * Math.sin(phi);
     }
     // reset the BALL when BALL outside of the canvas in the
     // x direction
     if (0 > this.x + this.size || this.x > WIDTH) {
-      this.Serve(pdle === PLAYER ? 1 : -1);
+      this.Serve(pdle === P1 ? 1 : -1);
     }
   }
   Draw(ctx) {
