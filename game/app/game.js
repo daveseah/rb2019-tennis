@@ -19,7 +19,7 @@ let BALL = new Ball();
 /// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 function SetInputs(input) {
   INPUTS.keystate = input.keystate;
-  INPUTS.pad0 = input.pad0;
+  INPUTS.pad1 = input.pad1;
 }
 
 /// INIT //////////////////////////////////////////////////////////////////////
@@ -34,9 +34,10 @@ function Init() {
 /// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 function Update() {
   BALL.Update({ P1, P2 });
-  P1.Update({ paddle: INPUTS.pad0, keystate: INPUTS.keystate });
-  P2.Update({ bally: BALL.y, ballsize: BALL.size });
-  INPUTS.pad0 = null;
+  //  P1.Update({ paddle: INPUTS.pad0, keystate: INPUTS.keystate });
+  P1.Update({ paddle: BALL.y });
+  P2.Update({ paddle: BALL.y });
+  INPUTS.pad1 = null;
 }
 
 /// DRAW //////////////////////////////////////////////////////////////////////

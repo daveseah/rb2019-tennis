@@ -1,4 +1,4 @@
-const { HEIGHT, KEY_UP, KEY_DOWN } = require('./constants');
+const { HEIGHT, KEY_UP, KEY_DOWN, BALL_SIZE } = require('./constants');
 const STATE = require('./gamestate');
 
 /// CLASS: Paddle /////////////////////////////////////////////////////////////
@@ -48,11 +48,10 @@ class AIPlayer extends Paddle {
   constructor() {
     super();
     this.x = this.width;
-    this.type = 'ai';
   }
   Update(state) {
-    let { bally, ballsize } = state;
-    let desty = bally - (this.height - ballsize) * 0.5;
+    let { paddle } = state;
+    let desty = paddle - (this.height - BALL_SIZE) * 0.5;
     this.y += (desty - this.y) * 0.1;
     this.y = Math.max(Math.min(this.y, HEIGHT - this.height), 0);
   }

@@ -3,5 +3,7 @@ module.exports = {
   HEIGHT: 600,
   PI: Math.PI,
   KEY_UP: 38,
-  KEY_DOWN: 40
+  KEY_DOWN: 40,
+  BALL_SIZE: 20,
+  BALL_SPEED: 12
 };

@@ -51,7 +51,7 @@ function BootSystem() {
     // HACK: expects an integer; ignore non numbers
     const msg = e.data;
     let val = parseInt(msg, 10);
-    if (!isNaN(val)) GAME.SetInputs({ pad0: val });
+    if (!isNaN(val)) GAME.SetInputs({ pad1: val });
   };
 }
 /// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

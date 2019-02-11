@@ -1,4 +1,4 @@
-const { WIDTH, HEIGHT, PI } = require('./constants');
+const { WIDTH, HEIGHT, PI, BALL_SIZE, BALL_SPEED } = require('./constants');
 
 // helper function to check intesectiont between two
 // axis aligned bounding boxex (AABB)
@@ -10,11 +10,11 @@ function AABBIntersect(ax, ay, aw, ah, bx, by, bw, bh) {
 /// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 class Ball {
   constructor() {
-    this.size = 20;
+    this.size = BALL_SIZE;
+    this.speed = BALL_SPEED;
     this.x = null;
     this.y = null;
     this.vel = null;
-    this.speed = 12;
   }
   Serve(side) {
     if (typeof side !== 'number') throw Error('arg1 should be 1 or -1');
