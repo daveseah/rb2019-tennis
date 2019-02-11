@@ -4,7 +4,7 @@
   "description": "Baer Project 2019 Exhibit for Jupiter Hall.",
   "main": "",
   "scripts": {
-    "client": "parcel app/index.html",
+    "client": "parcel serve app/index.html --port 3000",
     "server": "node server/serial.js",
     "list:ports": "./node_modules/@serialport/list/lib/list.js"
   },

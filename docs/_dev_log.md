@@ -51,3 +51,23 @@ Visual Studio Code issues: Installing the visual studio Arduino extension requir
 - installing the 1.8.8 version of Arduino IDE
 
 The problem output messages "cannot open source file" and "include errors detected, Please update your includePath" are due to a bug [reported here](https://github.com/Microsoft/vscode-cpptools/issues/2610) and should be fixed in an update to the plugin.
+
+---
+
+Wonderful PONG sound reference (thanks Kelley!)
+http://cs.au.dk/~dsound/DigitalAudio.dir/Greenfoot/Pong.dir/Pong.html
+
+---
+
+Got the class hierarchy stuff straightened out a bit. Now I want to add two player capability.
+Can I generalize the AI code so the paddles play each other?
+
+Design note: The implementation of this PONG game doesn't use the standard representation of:
+
+MANANGER -> PIECE -> VIEW
+
+... but uses ...
+
+CONTROLLER/AI -> PIECE/VIEW
+
+I've rewritten the game loop to take this into account.

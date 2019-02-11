@@ -1,10 +1,10 @@
 const CONFIG = {
-  SRI: { SERIAL_PATH: '/dev/tty.usbmodem14101', INPUT_SCALE: 1 },
-  EXHIBIT: { SERIAL_PATH: '/dev/cu.usbserial-1410', INPUT_SCALE: 0.3 }
+  SRI: { SERIAL_PATH: '/dev/tty.usbmodem14101', INPUT_SCALE: 1, BAUDRATE: 115200 },
+  EXHIBIT: { SERIAL_PATH: '/dev/cu.usbserial-1410', INPUT_SCALE: 0.3, BAUDRATE: 115200 }
 };
 
 // select configuration
-const { SERIAL_PATH, INPUT_SCALE } = CONFIG['SRI'];
+const { SERIAL_PATH, INPUT_SCALE, BAUDRATE } = CONFIG['SRI'];
 
 // libraries
 const SerialPort = require('serialport');
@@ -19,8 +19,11 @@ let SOCK_GAME = null;
 // io values
 let c_paddle1 = 0;
 
+// greeting
+console.log('SERVER ! STARTING');
+
 // configure serial port
-SERIAL_P1 = new SerialPort(SERIAL_PATH, { baudRate: 115200 });
+SERIAL_P1 = new SerialPort(SERIAL_PATH, { baudRate: BAUDRATE });
 const parserP1 = new Readline();
 SERIAL_P1.pipe(parserP1);
 //
@@ -41,16 +44,18 @@ parserP1.on('data', line => {
 });
 // tell ARDUINO something happened
 SERIAL_P1.write('ARDUINO POWER ON\n');
+console.log(`SERVER ! SERIAL CONNECT '${SERIAL_PATH}' at ${BAUDRATE}`);
 
 // configure websocket
 const wss = new WebSocket.Server({ port: 8080 });
 //
 wss.on('connection', ws => {
-  console.log('connected server');
+  console.log('SOCKET ! CONNECTED');
   SOCK_GAME = ws;
-  SOCK_GAME.send('CONNECT ACK from NODE');
+  SOCK_GAME.send('SERVER:CONNECTED');
   //
   SOCK_GAME.on('message', message => {
-    console.log(`RECEIVED: '${message}'`);
+    console.log(`${message}`);
   });
 });
+console.log('SERVER ! WEBSOCKET SERVICE on 8080');
