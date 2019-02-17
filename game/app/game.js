@@ -103,6 +103,7 @@ function HandleGameEvent(status) {
       break;
     case 'BOUNCE':
       AUDIO.Bounce();
+      break;
     default:
       if (status) console.log(`unhandled event ${status}`);
   }

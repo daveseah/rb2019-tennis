@@ -1,6 +1,6 @@
-const WIDTH = 1200;
+const WIDTH = 1000;
 const ASPECT = 4 / 3;
-const PADDLE_UNITS = 5;
+const PADDLE_UNITS = 7;
 const SCORE_MAX = 9;
 const SCORE_SIZE = 1;
 

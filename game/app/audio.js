@@ -17,6 +17,9 @@ function PlayOscillator(hz, duration) {
 
 function ClickToEnable(element) {
   element.addEventListener('click', function() {
+    const alert = document.getElementById('alert');
+    if (alert.hidden) return;
+    alert.hidden = true;
     audioCtx.resume().then(() => {
       console.log('User enabled Audio by clicking canvas');
     });
