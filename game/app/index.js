@@ -25,8 +25,6 @@ function BootSystem() {
   m_canvas.height = HEIGHT;
   m_ctx = m_canvas.getContext('2d');
   document.body.appendChild(m_canvas);
-  // user must click to enable audio
-  AUDIO.ClickToEnable(m_canvas);
 
   // keep track of keyboard presses
   m_keystate = {};
@@ -42,6 +40,11 @@ function BootSystem() {
   m_socket = new WebSocket(m_socket_url);
   // case 1: run game on successful connection
   m_socket.onopen = () => {
+    // replace alert with 'user must click to enable audio'
+    AUDIO.ClickToEnable(m_canvas);
+    let alert = document.getElementById('alert');
+    alert.textContent = 'click playfield to play sound and remove this alert';
+    // initialize the game
     m_socket.send('client : open connection');
     InitGame();
     StepGame();

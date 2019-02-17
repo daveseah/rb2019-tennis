@@ -1,4 +1,4 @@
-const WIDTH = 1000;
+const WIDTH = 900;
 const ASPECT = 4 / 3;
 const PADDLE_UNITS = 7;
 const SCORE_MAX = 9;
