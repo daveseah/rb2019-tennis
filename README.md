@@ -5,6 +5,14 @@ CURRENT PROGRESS:
 - simple communication proof of concept
 - refactored pong sample source into modular JS
 - two player self-playing mode with paddle 0 override
+- oscillator-based sound effects
+- score keeping display using 8x4 character matrix
+- visible prompt to start game server
+- visible prompt to click screen for sound
+
+TO DO:
+
+- implement Ryan's serial controller protocol
 
 ### First Time Installation
 
