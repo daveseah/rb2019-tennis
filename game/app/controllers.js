@@ -1,4 +1,4 @@
-const { WIDTH, HEIGHT, KEY_UP, KEY_DOWN, BALL_SIZE } = require('./constants');
+const { PADDLE_UNITS, WIDTH, HEIGHT, KEY_UP, KEY_DOWN, BALL_SIZE } = require('./constants');
 
 /// CLASS: Paddle /////////////////////////////////////////////////////////////
 /// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -6,7 +6,7 @@ class Paddle {
   constructor(options) {
     let { side } = options;
     this.width = BALL_SIZE;
-    this.height = 100;
+    this.height = BALL_SIZE * PADDLE_UNITS;
     this.side = side;
     this.y = (HEIGHT - this.height) / 2;
     if (this.side === 0) throw Error('must pick side');

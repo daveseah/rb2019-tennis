@@ -44,6 +44,7 @@ class Ball {
       this.y += 2 * offset;
       // mirror the y velocity
       this.vel.y *= -1;
+      return 'BOUNCE';
     }
     // check againts target paddle to check collision in x
     // direction
@@ -59,6 +60,7 @@ class Ball {
       var smash = Math.abs(phi) > 0.2 * PI ? 1.5 : 1;
       this.vel.x = smash * (pdle === P1 ? 1 : -1) * this.speed * Math.cos(phi);
       this.vel.y = smash * this.speed * Math.sin(phi);
+      return 'PADDLE';
     }
     // reset the BALL when BALL outside of the canvas in the
     // x direction

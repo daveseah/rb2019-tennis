@@ -1,6 +1,7 @@
 /// LIBRARIES /////////////////////////////////////////////////////////////////
 /// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 const GAME = require('./game');
+const AUDIO = require('./audio');
 
 /// CONSTANTS and GLOBALS /////////////////////////////////////////////////////
 /// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -24,6 +25,9 @@ function BootSystem() {
   m_canvas.height = HEIGHT;
   m_ctx = m_canvas.getContext('2d');
   document.body.appendChild(m_canvas);
+  // user must click to enable audio
+  AUDIO.ClickToEnable(m_canvas);
+
   // keep track of keyboard presses
   m_keystate = {};
   document.addEventListener('keydown', function(evt) {

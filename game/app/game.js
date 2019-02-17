@@ -11,10 +11,14 @@
 const { Player, AIPlayer } = require('./controllers');
 const { Ball } = require('./ball');
 const { Scoreboard } = require('./scoreboard');
-const { WIDTH, HEIGHT, END_SCORE, NET_WIDTH } = require('./constants');
 
-/// GLOBAL INPUT STATE and SCORE //////////////////////////////////////////////
+// LOAD MODULES ///////////////////////////////////////////////////////////////
 /// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+const AUDIO = require('./audio');
+
+/// GLOBALS //////////////////// //////////////////////////////////////////////
+/// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+const { WIDTH, HEIGHT, NET_WIDTH } = require('./constants');
 let INPUTS = {};
 
 /// CREATE PIECES /////////////////////////////////////////////////////////////
@@ -49,7 +53,9 @@ function Start(side = -1) {
 /// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 function Update() {
   let status = BALL.Update({ P1, P2 });
-  if (status) ScoreKeeper(status);
+  if (status) {
+    HandleGameEvent(status);
+  }
   P1.Update({ paddle: INPUTS.pad1, ball: BALL, autotrack: 0.01 });
   P2.Update({ paddle: INPUTS.pad2, ball: BALL, autotrack: 0.1 });
 }
@@ -80,18 +86,25 @@ function Draw(ctx) {
 }
 
 /// SCORE //////////////////////////////////////////////////////////////////////
-function ScoreKeeper(status) {
+function HandleGameEvent(status) {
   switch (status) {
     case 'WIN P1':
       SCOREBOARD.Score(1);
+      AUDIO.Point();
       Start(1);
       break;
     case 'WIN P2':
       SCOREBOARD.Score(2);
+      AUDIO.Point();
       Start(-1);
       break;
+    case 'PADDLE':
+      AUDIO.Paddle();
+      break;
+    case 'BOUNCE':
+      AUDIO.Bounce();
     default:
-      if (status) console.log(status);
+      if (status) console.log(`unhandled event ${status}`);
   }
   let winner = SCOREBOARD.Won();
   if (winner) {
