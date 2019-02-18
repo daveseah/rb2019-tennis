@@ -9,10 +9,11 @@ CURRENT PROGRESS:
 - score keeping display using 8x4 character matrix
 - visible prompt to start game server
 - visible prompt to click screen for sound
+- controller protocol from multiple arduinos
 
-TO DO:
+TO DO:  
 
-- implement Ryan's serial controller protocol
+- Scale controller values to hardware inputs
 
 ### First Time Installation
 
