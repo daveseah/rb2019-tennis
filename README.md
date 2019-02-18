@@ -6,6 +6,10 @@ Many game and display parameters can be set by modifying `constants.js`.
 
 ### First Time Installation
 
+Here's a **demo installation video**:
+
+[![](http://img.youtube.com/vi/POdXbry-Qc4/0.jpg)](http://www.youtube.com/watch?v=POdXbry-Qc4 "Installation Demo")
+
 #### Prerequisites to install
 
 You will need to have **NodeJS** and **Git** installed. To program the Arduino board, you'll need the **Arduino IDE** but the client/server will run without connected hardware.
