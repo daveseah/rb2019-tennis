@@ -26,7 +26,7 @@ Configure the web client software:
 - `npm ci`
 - if you are using nvm, type `nvm use`
 
-## Running the Game Server
+### Run the Game Server
 
 HARDWARE CONFIGURATION
 
