@@ -41,14 +41,14 @@ Program your Arduino with the contents of `arduino/serial-encoder` with the Ardu
 - Make sure you are in the `bp2019-pong/game` directory
 - In the terminal, `npm run list:ports` to see the list of available serial ports
 - Find the _serial port path_ for your arduino board and copy it to the clipboard.
-- Edit `serial.js` in the `CONFIG` section at top, adding `COM1` and `COM2` paths to your serial ports. 
+- Edit `server/serial.js` in the `CONFIG` section at top, adding `COM1` and `COM2` paths to your serial ports. 
 
 Now to run the SERVER itself:
 
 - Open terminal window, and make sure you are in the `bp2019-pong/game` directory
-- With Arduino connected, type `npm run server`.
-- As you diddle the encoder, you should see number output in the terminal window.
-- NOTE: The values are sent only if a change is detected
+- `npm run server`
+- You will see some text appear describing what the server is doing. If you have compatible hardware plugged into the USB port and you have configured `server/serial.js`, you should see a successful connection message.
+- Next you will run the Game Client to see if the data is being received
 
 ### Run the Game Client
 
@@ -60,6 +60,9 @@ Open a SECOND TERMINAL WINDOW, then:
 - Twiddle the encoder knob to see if the paddle moves
 - Click on the play field to enable sound (this is a browser-enforced requirement)
 
-To enter FULL SCREEN MODE, go to the Chrome browser's VIEW MENU and disable _Always Show Toolbar_ and _Always Show Bookmarks_, then choose _Full Screen Mode_.
+The game runs in an attract mode, AI players that take turns beating each other. If an Arduino paddle controller is moved, however, it will take over the player. When a player reachers 9 points, the game is over and the player reverts to AI control unless the Arduino paddle is again moved.
 
-The MacOS shortcut for full screen mode is `CTRL-CMD-F`.
+#### Operating Notes
+
+* To enter FULL SCREEN MODE, go to the Chrome browser's VIEW MENU and disable _Always Show Toolbar_ and _Always Show Bookmarks_, then choose _Full Screen Mode_. The MacOS shortcut for full screen mode is `CTRL-CMD-F`.
+* You can change the screen size by editing `game/constants.js` and adjusting the WIDTH and HEIGHT. The game board and elements sizes are defined relative to WIDTH and HEIGHT.
