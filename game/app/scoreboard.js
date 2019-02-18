@@ -1,4 +1,9 @@
+const DBG = false;
+
+/// CONSTANTS ////////////////////////////////////////////////////////////////
+/// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 const { SCORE_X1, SCORE_X2, SCORE_Y, SCORE_SIZE, SCORE_MAX } = require('./constants');
+
 /// CLASS: Scoreboard /////////////////////////////////////////////////////////
 /// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 class Scoreboard {
@@ -15,22 +20,22 @@ class Scoreboard {
     switch (player) {
       case 1:
         this.scoreP1 = ++this.scoreP1;
-        console.log('point: player 1');
+        if (DBG) console.log('point: player 1');
         if (this.scoreP1 === SCORE_MAX) {
           this.winner = 1;
-          console.log('winner: player 1');
+          if (DBG) console.log('winner: player 1');
         }
         break;
       case 2:
         this.scoreP2 = ++this.scoreP2;
-        console.log('point: player 2');
+        if (DBG) console.log('point: player 2');
         if (this.scoreP2 === SCORE_MAX) {
-          console.log('winner: player 2');
+          if (DBG) console.log('winner: player 2');
           this.winner = 2;
         }
         break;
       default:
-        console.log('bad Score() input', player);
+        if (DBG) console.log('bad Score() input', player);
     }
   }
   //

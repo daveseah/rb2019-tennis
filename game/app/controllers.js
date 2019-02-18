@@ -30,15 +30,16 @@ class Player extends Paddle {
   constructor(side) {
     super(side);
   }
+  //
   Update(state) {
-    const { keystate, paddle, ball, autotrack = 0.1 } = state;
+    const { keystate, paddle, ball, autotrack = 0.1, twitch = 0 } = state;
     if (keystate) {
       if (keystate[KEY_UP]) this.y -= 7;
       if (keystate[KEY_DOWN]) this.y += 7;
-    } else if (paddle && paddle !== null) {
+    } else if (paddle !== undefined && paddle !== null) {
       this.y = Math.max(Math.min(paddle, HEIGHT - this.height), 0);
     } else if (ball) {
-      let desty = ball.y - (this.height - BALL_SIZE) * 0.5;
+      let desty = ball.y - (this.height - BALL_SIZE) * 0.5 + twitch;
       this.y += (desty - this.y) * autotrack;
       this.y = Math.max(Math.min(this.y, HEIGHT - this.height), 0);
     }

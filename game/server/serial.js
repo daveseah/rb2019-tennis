@@ -1,70 +1,68 @@
 const CONFIG = {
-  SRI: { COM1: '/dev/tty.usbmodem14101', COM2: '', INPUT_SCALE: 1, BAUDRATE: 115200 },
-  EXHIBIT: { COM1: '/dev/cu.usbserial-1410', INPUT_SCALE: 0.3, BAUDRATE: 115200 }
+  SRI: { COM1: '/dev/tty.usbmodem14101', COM2: '', BAUDRATE: 115200 },
+  EXHIBIT: { COM1: '/dev/cu.usbserial-1410', BAUDRATE: 115200 }
 };
 
 // select configuration
 const { COM1, COM2, INPUT_SCALE, BAUDRATE } = CONFIG['SRI'];
 
 // libraries
-const SerialPort = require('serialport');
-const Readline = require('@serialport/parser-readline');
 const WebSocket = require('ws');
+const ArduinoPaddle = require('./arduino-paddle');
 
 // communication
 let SERIAL_P1 = null;
 let SERIAL_P2 = null;
-let SOCK_GAME = null;
-
-// io values
-let c_paddle1 = 0;
+let CLIENT_SOCKETS = {};
+let CLIENT_ID_COUNTER = 0;
 
 // greeting
 console.log('SERVER ! STARTING');
 
-// configure serial port
-const parserP1 = new Readline();
+// Initialize Communications
 if (COM1) {
-  SERIAL_P1 = new SerialPort(COM1, { baudRate: BAUDRATE }, err => {
-    if (err) {
-      console.log('SERIAL ! ERROR connecting to COM1\n', '       ', err.message);
-      return;
-    }
-    console.log(`SERIAL ! CONNECTED '${COM1}' at ${BAUDRATE} ...`);
-
-    SERIAL_P1.pipe(parserP1);
-    //
-    parserP1.on('data', line => {
-      let out = '';
-      let intPos = parseInt(line, 10) * INPUT_SCALE;
-      if (isNaN(intPos)) intPos = 0;
-      let float = (intPos / 65536) * INPUT_SCALE;
-      // send to client if changed
-      if (c_paddle1 !== intPos) {
-        out += `PAD1\t${intPos}`;
-        if (SOCK_GAME) SOCK_GAME.send(intPos);
-        else out += ' (client offline)';
-        console.log(out);
-      }
-      // update last position
-      c_paddle1 = intPos;
-    });
-    // tell ARDUINO something happened
-    SERIAL_P1.write('ARDUINO POWER ON\n');
+  SERIAL_P1 = new ArduinoPaddle(COM1, BAUDRATE);
+  SERIAL_P1.Connect(m_HandleArduinoPaddleEvent);
+}
+if (COM2) {
+  SERIAL_P2 = new ArduinoPaddle(COM2, BAUDRATE);
+  SERIAL_P2.Connect(m_HandleArduinoPaddleEvent);
+}
+// send to all clients
+function m_HandleArduinoPaddleEvent(input) {
+  Object.keys(CLIENT_SOCKETS).forEach(key => {
+    CLIENT_SOCKETS[key].send(JSON.stringify(input));
   });
 }
-const parserP2 = new Readline();
 
 // configure websocket
-const wss = new WebSocket.Server({ port: 8080 });
+const WSS = new WebSocket.Server({ port: 8080 });
 //
-wss.on('connection', ws => {
-  console.log('SOCKET ! CONNECTED');
-  SOCK_GAME = ws;
-  SOCK_GAME.send('SERVER:CONNECTED');
+WSS.on('connection', ws => {
+  ws.id = ++CLIENT_ID_COUNTER;
+  CLIENT_SOCKETS[ws.id] = ws;
+  // if got this far, we can save our socket connection and bind serial ports
+  console.log(`SOCKET ! CONNECTED ${ws.id}`);
+  // tell client that they've connected
+  ws.send(JSON.stringify({ info: 'SERVER:CONNECTED', sid: ws.id }));
+
+  // socket handlers
+  ws.on('message', json => {
+    if (json.charAt(0) !== '{') {
+      console.warn('SOCKET ! Received malformed JSON', json);
+      return;
+    }
+    console.log(`SOCKET ! ${ws.id} sent ${json}`);
+  });
   //
-  SOCK_GAME.on('message', message => {
-    console.log(`${message}`);
+  ws.on('close', () => {
+    let id = ws.id;
+    if (id) {
+      delete CLIENT_SOCKETS[ws.id];
+      console.log(`SOCKET ~ DISCONNECTED ${ws.id}`);
+    }
   });
 });
+//
+
 console.log('SERVER ! WEBSOCKET SERVICE on 8080');

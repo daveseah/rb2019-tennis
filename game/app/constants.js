@@ -1,8 +1,8 @@
 const WIDTH = 900;
 const ASPECT = 4 / 3;
-const PADDLE_UNITS = 7;
+const PADDLE_UNITS = 7; // multiple of ball size
 const SCORE_MAX = 9;
-const SCORE_SIZE = 1;
+const SCORE_SIZE = 1; // fractional size relative to ball size
 
 // other constants
 let CONSTANTS = {
@@ -23,7 +23,7 @@ let CONSTANTS = {
 
 // relative constants based on screen size and ball size
 CONSTANTS.BALL_SIZE = Math.floor(CONSTANTS.HEIGHT / 60);
-CONSTANTS.BALL_SPEED = Math.floor(CONSTANTS.WIDTH / 80);
+CONSTANTS.BALL_SPEED = Math.floor(CONSTANTS.WIDTH / 100);
 CONSTANTS.NET_WIDTH = Math.floor(CONSTANTS.WIDTH / 200);
 CONSTANTS.SCORE_SIZE = Math.floor(CONSTANTS.BALL_SIZE * SCORE_SIZE);
 

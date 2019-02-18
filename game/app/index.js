@@ -45,7 +45,7 @@ function BootSystem() {
     let alert = document.getElementById('alert');
     alert.textContent = 'click playfield to play sound and remove this alert';
     // initialize the game
-    m_socket.send('client : open connection');
+    Send({ info: 'test client->server connection' });
     InitGame();
     StepGame();
   };
@@ -55,11 +55,25 @@ function BootSystem() {
   };
   // case 3: received a control from server
   m_socket.onmessage = e => {
-    // HACK: expects an integer; ignore non numbers
     const msg = e.data;
-    let val = parseInt(msg, 10);
-    if (!isNaN(val)) GAME.SetInputs({ pad1: val });
+    if (msg.charAt(0) !== '{') {
+      console.warn(`socket expected JSON, got ${msg}`);
+      throw Error('abort game');
+    }
+    // if got this far, probably valid json
+    let { id, value } = JSON.parse(msg);
+    if (!isNaN(value)) {
+      GAME.SetInputs({ id, value });
+    }
   };
+}
+/// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+function Send(pktObj) {
+  if (m_socket) {
+    const json = JSON.stringify(pktObj);
+    console.log('SOCKET SEND', json);
+    m_socket.send(json);
+  }
 }
 /// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 /*/ Initialize game data structures
@@ -84,7 +98,7 @@ function StepGame() {
 if (module.hot) {
   // warn server that client is reloading
   module.hot.dispose(function() {
-    m_socket.send('client : reloaded page');
+    Send({ info: 'client reloaded' });
   });
   // reload the entire page to keep multiple
   // index.js instances from running until
