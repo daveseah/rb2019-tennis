@@ -9,6 +9,7 @@ const { COM1, COM2, INPUT_SCALE, BAUDRATE } = CONFIG['SRI'];
 // libraries
 const WebSocket = require('ws');
 const ArduinoPaddle = require('./arduino-paddle');
+const IP = require('ip');
 
 // communication
 let SERIAL_P1 = null;
@@ -66,3 +67,4 @@ WSS.on('connection', ws => {
 //
 
 console.log('SERVER ! WEBSOCKET SERVICE on 8080');
+console.log(`\n****** ! OPEN 'http://${IP.address()}:3000' in CHROME BROWSER\n`);

@@ -9,7 +9,8 @@ const AUDIO = require('./audio');
 let m_canvas, m_ctx;
 let m_keystate;
 // socket connections
-const m_socket_url = 'ws://localhost:8080';
+const m_socket_url = `ws://${location.hostname}`;
+const m_socket_port = 8080;
 let m_socket;
 // module-wide shared constants
 const { WIDTH, HEIGHT } = require('./constants');
@@ -37,7 +38,9 @@ function BootSystem() {
     GAME.SetInputs(m_keystate);
   });
   // create socket connection to server
-  m_socket = new WebSocket(m_socket_url);
+  const endpoint = `${m_socket_url}:${m_socket_port}`;
+  console.log(`boot: connecting to socket ${endpoint}`);
+  m_socket = new WebSocket(endpoint);
   // case 1: run game on successful connection
   m_socket.onopen = () => {
     // replace alert with 'user must click to enable audio'
