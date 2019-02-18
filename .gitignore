@@ -50,3 +50,6 @@ Thumbs.db
 
 # Ignore JetBrains' IDEs
 .idea
+
+# Ignore .vscode directory
+.vscode

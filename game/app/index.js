@@ -1,246 +1,101 @@
-// PONG source based on Max Wihlborg's YouTube tutorial,
-// https://www.youtube.com/watch?v=KApAJhkkqkA
-// https://github.com/maxwihlborg/youtube-tutorials/blob/master/pong/index.html
+/// LIBRARIES /////////////////////////////////////////////////////////////////
+/// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+const GAME = require('./game');
+const AUDIO = require('./audio');
 
-var /**
-   * Constants
-   */
-  WIDTH = 800,
-  HEIGHT = 450,
-  pi = Math.PI,
-  UpArrow = 38,
-  DownArrow = 40,
-  /**
-   *  Hacked Input from Serial
-   */
-  PAD1 = null,
-  /**
-   * Game elements
-   */
-  canvas,
-  ctx,
-  keystate,
-  /**
-   * The player paddle
-   *
-   * @type {Object}
-   */
-  player = {
-    x: null,
-    y: null,
-    width: 20,
-    height: 100,
-    /**
-     * Update the position depending on pressed keys
-     */
-    update: function() {
-      // original code
-      if (keystate[UpArrow]) this.y -= 7;
-      if (keystate[DownArrow]) this.y += 7;
-      // HACKED INPUT
-      if (PAD1 !== null) {
-        this.y = PAD1;
-        PAD1 = null;
-      }
-      // keep the paddle inside of the canvas
-      this.y = Math.max(Math.min(this.y, HEIGHT - this.height), 0);
-    },
-    /**
-     * Draw the player paddle to the canvas
-     */
-    draw: function() {
-      ctx.fillRect(this.x, this.y, this.width, this.height);
-    }
-  },
-  /**
-   * The ai paddle
-   *
-   * @type {Object}
-   */
-  ai = {
-    x: null,
-    y: null,
-    width: 20,
-    height: 100,
-    /**
-     * Update the position depending on the ball position
-     */
-    update: function() {
-      // calculate ideal position
-      var desty = ball.y - (this.height - ball.side) * 0.5;
-      // ease the movement towards the ideal position
-      this.y += (desty - this.y) * 0.1;
-      // keep the paddle inside of the canvas
-      this.y = Math.max(Math.min(this.y, HEIGHT - this.height), 0);
-    },
-    /**
-     * Draw the ai paddle to the canvas
-     */
-    draw: function() {
-      ctx.fillRect(this.x, this.y, this.width, this.height);
-    }
-  },
-  /**
-   * The ball object
-   *
-   * @type {Object}
-   */
-  ball = {
-    x: null,
-    y: null,
-    vel: null,
-    side: 20,
-    speed: 12,
-    /**
-     * Serves the ball towards the specified side
-     *
-     * @param  {number} side 1 right
-     *                       -1 left
-     */
-    serve: function(side) {
-      // set the x and y position
-      var r = Math.random();
-      this.x = side === 1 ? player.x + player.width : ai.x - this.side;
-      this.y = (HEIGHT - this.side) * r;
-      // calculate out-angle, higher/lower on the y-axis =>
-      // steeper angle
-      var phi = 0.1 * pi * (1 - 2 * r);
-      // set velocity direction and magnitude
-      this.vel = {
-        x: side * this.speed * Math.cos(phi),
-        y: this.speed * Math.sin(phi)
-      };
-    },
-    /**
-     * Update the ball position and keep it within the canvas
-     */
-    update: function() {
-      // update position with current velocity
-      this.x += this.vel.x;
-      this.y += this.vel.y;
-      // check if out of the canvas in the y direction
-      if (0 > this.y || this.y + this.side > HEIGHT) {
-        // calculate and add the right offset, i.e. how far
-        // inside of the canvas the ball is
-        var offset = this.vel.y < 0 ? 0 - this.y : HEIGHT - (this.y + this.side);
-        this.y += 2 * offset;
-        // mirror the y velocity
-        this.vel.y *= -1;
-      }
-      // helper function to check intesectiont between two
-      // axis aligned bounding boxex (AABB)
-      var AABBIntersect = function(ax, ay, aw, ah, bx, by, bw, bh) {
-        return ax < bx + bw && ay < by + bh && bx < ax + aw && by < ay + ah;
-      };
-      // check againts target paddle to check collision in x
-      // direction
-      var pdle = this.vel.x < 0 ? player : ai;
-      if (
-        AABBIntersect(pdle.x, pdle.y, pdle.width, pdle.height, this.x, this.y, this.side, this.side)
-      ) {
-        // set the x position and calculate reflection angle
-        this.x = pdle === player ? player.x + player.width : ai.x - this.side;
-        var n = (this.y + this.side - pdle.y) / (pdle.height + this.side);
-        var phi = 0.25 * pi * (2 * n - 1); // pi/4 = 45
-        // calculate smash value and update velocity
-        var smash = Math.abs(phi) > 0.2 * pi ? 1.5 : 1;
-        this.vel.x = smash * (pdle === player ? 1 : -1) * this.speed * Math.cos(phi);
-        this.vel.y = smash * this.speed * Math.sin(phi);
-      }
-      // reset the ball when ball outside of the canvas in the
-      // x direction
-      if (0 > this.x + this.side || this.x > WIDTH) {
-        this.serve(pdle === player ? 1 : -1);
-      }
-    },
-    /**
-     * Draw the ball to the canvas
-     */
-    draw: function() {
-      ctx.fillRect(this.x, this.y, this.side, this.side);
-    }
-  };
-/**
- * Starts the game
- */
-function main() {
+/// CONSTANTS and GLOBALS /////////////////////////////////////////////////////
+/// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// drawing surfaces
+let m_canvas, m_ctx;
+let m_keystate;
+// socket connections
+const m_socket_url = 'ws://localhost:8080';
+let m_socket;
+// module-wide shared constants
+const { WIDTH, HEIGHT } = require('./constants');
+
+/// GAME CONTROLLER ///////////////////////////////////////////////////////////
+/// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+/*/ Initialize Game Playfields and keyboard inputs, and connect to server
+/*/
+function BootSystem() {
   // create, initiate and append game canvas
-  canvas = document.createElement('canvas');
-  canvas.width = WIDTH;
-  canvas.height = HEIGHT;
-  ctx = canvas.getContext('2d');
-  document.body.appendChild(canvas);
-  keystate = {};
+  m_canvas = document.createElement('canvas');
+  m_canvas.width = WIDTH;
+  m_canvas.height = HEIGHT;
+  m_ctx = m_canvas.getContext('2d');
+  document.body.appendChild(m_canvas);
+
   // keep track of keyboard presses
+  m_keystate = {};
   document.addEventListener('keydown', function(evt) {
-    keystate[evt.keyCode] = true;
+    m_keystate[evt.keyCode] = true;
+    GAME.SetInputs(m_keystate);
   });
   document.addEventListener('keyup', function(evt) {
-    delete keystate[evt.keyCode];
+    delete m_keystate[evt.keyCode];
+    GAME.SetInputs(m_keystate);
   });
-  init(); // initiate game objects
-  // game loop function
-  var loop = function() {
-    update();
-    draw();
-    window.requestAnimationFrame(loop, canvas);
+  // create socket connection to server
+  m_socket = new WebSocket(m_socket_url);
+  // case 1: run game on successful connection
+  m_socket.onopen = () => {
+    // replace alert with 'user must click to enable audio'
+    AUDIO.ClickToEnable(m_canvas);
+    let alert = document.getElementById('alert');
+    alert.textContent = 'click playfield to play sound and remove this alert';
+    // initialize the game
+    m_socket.send('client : open connection');
+    InitGame();
+    StepGame();
   };
-  window.requestAnimationFrame(loop, canvas);
+  // case 2: server isn't running, so alert and retry
+  m_socket.onerror = error => {
+    console.log(`WebSocket error:`, error);
+  };
+  // case 3: received a control from server
+  m_socket.onmessage = e => {
+    // HACK: expects an integer; ignore non numbers
+    const msg = e.data;
+    let val = parseInt(msg, 10);
+    if (!isNaN(val)) GAME.SetInputs({ pad1: val });
+  };
 }
-/**
- * Initatite game objects and set start positions
- */
-function init() {
-  player.x = player.width;
-  player.y = (HEIGHT - player.height) / 2;
-  ai.x = WIDTH - (player.width + ai.width);
-  ai.y = (HEIGHT - ai.height) / 2;
-  ball.serve(1);
+/// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+/*/ Initialize game data structures
+/*/
+function InitGame() {
+  // initiate data structures
+  GAME.Init();
+  // initiate runtime
+  GAME.Start();
 }
-/**
- * Update all game objects
- */
-function update() {
-  ball.update();
-  player.update();
-  ai.update();
+/// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+/*/ Start game loop
+/*/
+function StepGame() {
+  GAME.Update();
+  GAME.Draw(m_ctx);
+  window.requestAnimationFrame(StepGame, m_canvas);
 }
-/**
- * Clear canvas and draw all game objects and net
- */
-function draw() {
-  ctx.fillRect(0, 0, WIDTH, HEIGHT);
-  ctx.save();
-  ctx.fillStyle = '#fff';
-  ball.draw();
-  player.draw();
-  ai.draw();
-  // draw the net
-  var w = 4;
-  var x = (WIDTH - w) * 0.5;
-  var y = 0;
-  var step = HEIGHT / 20; // how many net segments
-  while (y < HEIGHT) {
-    ctx.fillRect(x, y + step * 0.25, w, step * 0.5);
-    y += step;
-  }
-  ctx.restore();
+
+/// DEV: LIVE RELOADING ///////////////////////////////////////////////////////
+/// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+if (module.hot) {
+  // warn server that client is reloading
+  module.hot.dispose(function() {
+    m_socket.send('client : reloaded page');
+  });
+  // reload the entire page to keep multiple
+  // index.js instances from running until
+  // code is completely modularized
+  module.hot.accept(function() {
+    setTimeout(() => {
+      window.location.reload();
+    });
+  });
 }
-// start and run the game
-main();
 
-// websockets
-const url = 'ws://localhost:8080';
-const connection = new WebSocket(url);
-
-connection.onopen = () => {
-  connection.send('REQUEST from BROWSER');
-};
-
-connection.onerror = error => {
-  console.log(`WebSocket error:`, error);
-};
-
-connection.onmessage = e => {
-  PAD1 = parseInt(e.data, 10);
-};
+/// START THE GAME ////////////////////////////////////////////////////////////
+/// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+BootSystem();

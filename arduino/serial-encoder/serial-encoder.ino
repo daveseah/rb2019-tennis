@@ -14,10 +14,11 @@ volatile char controlLoc = 'L';
 
 
 // SETUP
-void setup() {
+void setup()
+{
   pinMode(ENCODER0PINA, INPUT);
   pinMode(ENCODER0PINB, INPUT);
-  #ifdef HOMESWITCH0
+#ifdef HOMESWITCH0
   pinMode(HOMESWITCH0, INPUT);
   #endif
   #ifdef LOCSWITCH0
@@ -45,14 +46,16 @@ void setup() {
 }
 
 // MAIN RUN-LOOP
-void loop() {
-  // Check the home switch status
-  // if activated, zero position
-  #ifdef HOMESWITCH0
-  if (digitalRead(HOMESWITCH0) == LOW) {
+void loop()
+{
+// Check the home switch status
+// if activated, zero position
+#ifdef HOMESWITCH0
+  if (digitalRead(HOMESWITCH0) == LOW)
+  {
     encoder0Pos = 0;
   }
-  #endif
+#endif
 
   // Output current position and controller location
   // ex: "R3034\n" for right controller
@@ -62,26 +65,34 @@ void loop() {
 }
 
 // FUNCTIONS
-int incrementPos() {
-  if (encoder0Pos<MAX) ++encoder0Pos;
+int incrementPos()
+{
+  if (encoder0Pos < MAX)
+    ++encoder0Pos;
   return encoder0Pos;
 }
 
-int decrementPos() {
-  if (encoder0Pos>MIN) --encoder0Pos;
+int decrementPos()
+{
+  if (encoder0Pos > MIN)
+    --encoder0Pos;
   return encoder0Pos;
 }
 
 // Channel A Interupt Routine
-void doEncoderA() {
+void doEncoderA()
+{
   // look for a low-to-high on channel A
-  if (digitalRead(ENCODER0PINA) == HIGH) {
+  if (digitalRead(ENCODER0PINA) == HIGH)
+  {
     // check channel B to see which way encoder is turning
-    if (digitalRead(ENCODER0PINB) == LOW) 
+    if (digitalRead(ENCODER0PINB) == LOW)
       incrementPos();
-    else 
+    else
       decrementPos();
-  } else { // Must be a high-to-low transistion
+  }
+  else
+  { // Must be a high-to-low transistion
     if (digitalRead(ENCODER0PINB) == HIGH)
       incrementPos();
     else
@@ -90,18 +101,22 @@ void doEncoderA() {
 }
 
 // Channel B Interupt Routine
-void doEncoderB() {
+void doEncoderB()
+{
   // look for a low-to-high on channel B
-  if (digitalRead(ENCODER0PINB) == HIGH) {
+  if (digitalRead(ENCODER0PINB) == HIGH)
+  {
     // check channel A to see which way encoder is turning
     if (digitalRead(ENCODER0PINA) == HIGH)
       incrementPos();
-    else 
+    else
       decrementPos();
-  } else {  // Must be a high-to-low transistion
-    if (digitalRead(ENCODER0PINA) == LOW) 
+  }
+  else
+  { // Must be a high-to-low transistion
+    if (digitalRead(ENCODER0PINA) == LOW)
       incrementPos();
-    else 
+    else
       decrementPos();
   }
 }
