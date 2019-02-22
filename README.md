@@ -12,11 +12,11 @@ Here's a **demo installation video**:
 
 #### Prerequisites to install
 
+Note: these instructions presume you are using a Unix-y system like Linux or MacOS. These instructions are tested on MacOS Mojave. You can run the game client/server on Windows 10 WSL and Windows 10 via scoop, but the serial port commands currently don't work.
+
 You will need to have **NodeJS** and **Git** installed. To program the Arduino board, you'll need the **Arduino IDE** but the client/server will run without connected hardware.
 
 #### Setup
-
-Note: these instructions presume you are using a Unix-y system like Linux or MacOS. These instructions are tested on MacOS Mojave. It may be possible to use Windows SUbsystem for Linux (WSL) on Windows 10, but I have not tested it.
 
 Get the Repo:
 
@@ -39,7 +39,7 @@ If you have functioning hardware, you can change the source code to match your A
 Program your Arduino with the contents of `arduino/serial-encoder` with the Arduino IDE if you haven't already, then modify the server code:
 
 - Make sure you are in the `bp2019-pong/game` directory
-- In the terminal, `npm run list:ports` to see the list of available serial ports
+- In the terminal, `npm run list:ports` to see the list of available serial ports (note: this code **does not work on Windows** using either WSL or Scoop)
 - Find the _serial port path_ for your arduino board and copy it to the clipboard.
 - Edit `server/serial.js` in the `CONFIG` section at top, adding `COM1` and `COM2` paths to your serial ports. 
 
