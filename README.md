@@ -12,7 +12,7 @@ Here's a **demo installation video**:
 
 #### Prerequisites to install
 
-Note: these instructions presume you are using a Unix-y system like Linux or MacOS. These instructions are tested on MacOS Mojave. You can run the game client/server on Windows 10 WSL and Windows 10 via scoop, but the serial port commands currently don't work.
+Note: these instructions presume you are using a Unix-y system like Linux or MacOS. These instructions are tested on MacOS Mojave. You *CAN* [run on Windows 10 WSL or via Scoop](/wiki/Installing-on-Windows), but the serial port commands currently don't work.
 
 You will need to have **NodeJS** and **Git** installed. To program the Arduino board, you'll need the **Arduino IDE** but the client/server will run without connected hardware.
 
