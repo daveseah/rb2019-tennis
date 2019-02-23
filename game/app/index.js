@@ -1,3 +1,10 @@
+/// REMOTE CONTROLLER SOCKET OVERRIDE /////////////////////////////////////////
+/// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// const ALT_SOCKET = null; // no remote server
+const ALT_SOCKET = 'ws://192.168.2.221'; // socketserver is not localhost
+const ALT_SOCKET_ON = false;
+const DBG = false;
+
 /// LIBRARIES /////////////////////////////////////////////////////////////////
 /// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 const GAME = require('./game');
@@ -9,7 +16,7 @@ const AUDIO = require('./audio');
 let m_canvas, m_ctx;
 let m_keystate;
 // socket connections
-const m_socket_url = `ws://${location.hostname}`;
+const m_socket_url = ALT_SOCKET_ON ? ALT_SOCKET : `ws://${location.hostname}`;
 const m_socket_port = 8080;
 let m_socket;
 // module-wide shared constants
@@ -56,17 +63,30 @@ function BootSystem() {
   m_socket.onerror = error => {
     console.log(`WebSocket error:`, error);
   };
-  // case 3: received a control from server
+  /***************************************************************************\
+    case 3: received a control from server
+    we're expecting JSON data from the socket server with the properties
+    id or value
+  \***************************************************************************/
   m_socket.onmessage = e => {
     const msg = e.data;
-    if (msg.charAt(0) !== '{') {
-      console.warn(`socket expected JSON, got ${msg}`);
-      throw Error('abort game');
+    const fchar = msg.charAt(0);
+    // support two protocols NON-JSON or JSON
+    // first non-JSON
+    if (fchar !== '{') {
+      let id = fchar;
+      let value = Number.parseInt(msg.substring(1));
+      if (!isNaN(value)) {
+        if (DBG) console.log('RAW', id, value);
+        GAME.SetInputs(id, value);
+      }
+      return;
     }
-    // if got this far, probably valid json
+    // if got this far, hopefully JSON
     let { id, value } = JSON.parse(msg);
     if (!isNaN(value)) {
-      GAME.SetInputs({ id, value });
+      if (DBG) console.log('JSON', id, value);
+      GAME.SetInputs(id, value);
     }
   };
 }

@@ -1,7 +1,9 @@
 const CONFIG = {
-  SRI: { COM1: '/dev/tty.usbmodem14101', COM2: '', BAUDRATE: 115200 },
+  SRI: { COM1: '/dev/tty.usbmodem14201', COM2: '', BAUDRATE: 115200 },
   EXHIBIT: { COM1: '/dev/cu.usbserial-1410', BAUDRATE: 115200 }
 };
+
+const DBG = false;
 
 // select configuration
 const { COM1, COM2, INPUT_SCALE, BAUDRATE } = CONFIG['SRI'];
@@ -23,16 +25,23 @@ console.log('SERVER ! STARTING');
 // Initialize Communications
 if (COM1) {
   SERIAL_P1 = new ArduinoPaddle(COM1, BAUDRATE);
-  SERIAL_P1.Connect(m_HandleArduinoPaddleEvent);
+  SERIAL_P1.Connect(m_SendPaddleJSON);
 }
 if (COM2) {
   SERIAL_P2 = new ArduinoPaddle(COM2, BAUDRATE);
-  SERIAL_P2.Connect(m_HandleArduinoPaddleEvent);
+  SERIAL_P2.Connect(m_SendPaddleJSON);
 }
 // send to all clients
-function m_HandleArduinoPaddleEvent(input) {
+function m_SendPaddleJSON(input) {
+  if (DBG) console.log('JSON', input);
   Object.keys(CLIENT_SOCKETS).forEach(key => {
     CLIENT_SOCKETS[key].send(JSON.stringify(input));
+  });
+}
+function m_SendPaddleRAW(rawinput) {
+  if (DBG) console.log('RAW', rawinput);
+  Object.keys(CLIENT_SOCKETS).forEach(key => {
+    CLIENT_SOCKETS[key].send(rawinput);
   });
 }
 

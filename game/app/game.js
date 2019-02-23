@@ -37,19 +37,33 @@ let SPAZ_T2 = null;
 
 /// SET INPUT /////////////////////////////////////////////////////////////////
 /// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-function SetInputs(input) {
-  if (input.keystate) INPUTS.keystate = input.keystate;
-  if (input.id)
-    switch (input.id) {
+function SetInputs(inputOrID, value) {
+  // PROTOCOL 1
+  if (typeof inputOrID === 'object') {
+    if (inputOrID.keystate) INPUTS.keystate = inputOrID.keystate;
+    if (inputOrID.id) u_UpdateInputs(inputOrID.id, inputOrID.value);
+    return;
+  }
+  // PROTOCOL 2
+  if (typeof inputOrID === 'string') {
+    u_UpdateInputs(inputOrID, value);
+    return;
+  }
+  console.warn(`bad game input`, inputOrID);
+
+  // HELPER FUNCTION
+  function u_UpdateInputs(id, value) {
+    switch (id) {
       case 'L':
-        INPUTS.pad1 = input.value;
+        INPUTS.pad1 = value;
         break;
       case 'R':
-        INPUTS.pad2 = input.value;
+        INPUTS.pad2 = value;
         break;
       default:
-        console.warn(`unknown input id ${input.id}`);
+        console.warn(`unknown input id ${id}`);
     }
+  }
 }
 
 /// INIT //////////////////////////////////////////////////////////////////////
