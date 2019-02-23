@@ -1,8 +1,10 @@
-const WIDTH = 900;
-const ASPECT = 4 / 3;
-const PADDLE_UNITS = 7; // multiple of ball size
-const SCORE_MAX = 9;
-const SCORE_SIZE = 1; // fractional size relative to ball size
+// display and gameplay tuning
+const WIDTH = 800; // native projector width in pixels
+const ASPECT = 4 / 3; // aspect ratio (usuallyl 4/3 or 16/9)
+const PADDLE_UNITS = 7; // height of paddle in BALL units
+const SCORE_MAX = 10; // maximum score
+const X_SPEED = 0.5; // ball speed multiplier (do not exceed 2.5)
+const X_SCORE = 1; // score height multiplier
 
 // other constants
 let CONSTANTS = {
@@ -12,11 +14,11 @@ let CONSTANTS = {
   PADDLE_UNITS,
   SCORE_MAX,
   NET_WIDTH: 4,
-  BALL_SPEED: 12,
+  BALL_SPEED: null, // calculated below
   MATRIX_W: 4, // 4 segments size (0-3)
   MATRIX_H: 8, // 8 segments tall (0-7)
-  BALL_SIZE: null,
-  SCORE_SIZE: null,
+  BALL_SIZE: null, // calculated below
+  SCORE_SIZE: null, // calculated below
   KEY_UP: 38,
   KEY_DOWN: 40,
   PADDLE_HOLE: 0, // "unreachable" paddle area (multiple of ball size)
@@ -25,10 +27,10 @@ let CONSTANTS = {
 };
 
 // relative constants based on screen size and ball size
+CONSTANTS.BALL_SPEED = Math.floor((CONSTANTS.WIDTH / 100) * X_SPEED);
 CONSTANTS.BALL_SIZE = Math.floor(CONSTANTS.HEIGHT / 60);
-CONSTANTS.BALL_SPEED = Math.floor(CONSTANTS.WIDTH / 100);
 CONSTANTS.NET_WIDTH = Math.floor(CONSTANTS.WIDTH / 200);
-CONSTANTS.SCORE_SIZE = Math.floor(CONSTANTS.BALL_SIZE * SCORE_SIZE);
+CONSTANTS.SCORE_SIZE = Math.floor(CONSTANTS.BALL_SIZE * X_SCORE);
 
 // screen-relative positionin of scores
 const half = Math.floor(CONSTANTS.WIDTH / 2);

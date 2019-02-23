@@ -25,6 +25,7 @@ const {
   HEIGHT,
   NET_WIDTH,
   BALL_SIZE,
+  BALL_SPEED,
   PADDLE_UNITS,
   PADDLE_INPUT_MIN,
   PADDLE_INPUT_MAX,
@@ -131,6 +132,9 @@ function SpazP2() {
 }
 /// UPDATE ////////////////////////////////////////////////////////////////////
 /// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+const AI_FAST = BALL_SPEED / 32;
+const AI_SLOW = BALL_SPEED / 80;
+
 function Update() {
   let status = BALL.Update({ P1, P2 });
   if (status) {
@@ -140,13 +144,13 @@ function Update() {
     paddle: INPUTS.pad1,
     ball: BALL,
     twitch: SPAZ_P1,
-    autotrack: ADVANTAGE ? 0.25 : 0.1
+    autotrack: ADVANTAGE ? AI_FAST : AI_SLOW
   });
   P2.Update({
     paddle: INPUTS.pad2,
     ball: BALL,
     twitch: SPAZ_P2,
-    autotrack: ADVANTAGE ? 0.1 : 0.25
+    autotrack: ADVANTAGE ? AI_SLOW : AI_FAST
   });
 }
 
