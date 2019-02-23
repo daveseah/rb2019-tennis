@@ -18,7 +18,10 @@ let CONSTANTS = {
   BALL_SIZE: null,
   SCORE_SIZE: null,
   KEY_UP: 38,
-  KEY_DOWN: 40
+  KEY_DOWN: 40,
+  PADDLE_HOLE: 0, // "unreachable" paddle area (multiple of ball size)
+  PADDLE_INPUT_MIN: 0, // minimum DEVICE units to clamp input
+  PADDLE_INPUT_MAX: 29000 // maximum DEVICE units to clamp input
 };
 
 // relative constants based on screen size and ball size

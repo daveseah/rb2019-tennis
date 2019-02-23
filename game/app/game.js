@@ -20,7 +20,16 @@ const AUDIO = require('./audio');
 
 /// GLOBALS //////////////////// //////////////////////////////////////////////
 /// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-const { WIDTH, HEIGHT, NET_WIDTH, BALL_SIZE, PADDLE_UNITS } = require('./constants');
+const {
+  WIDTH,
+  HEIGHT,
+  NET_WIDTH,
+  BALL_SIZE,
+  PADDLE_UNITS,
+  PADDLE_INPUT_MIN,
+  PADDLE_INPUT_MAX,
+  PADDLE_HOLE
+} = require('./constants');
 let INPUTS = {};
 
 /// CREATE PIECES /////////////////////////////////////////////////////////////
@@ -41,18 +50,39 @@ function SetInputs(inputOrID, value) {
   // PROTOCOL 1
   if (typeof inputOrID === 'object') {
     if (inputOrID.keystate) INPUTS.keystate = inputOrID.keystate;
-    if (inputOrID.id) u_UpdateInputs(inputOrID.id, inputOrID.value);
+    if (inputOrID.id) u_UpdatePaddleInputs(inputOrID.id, inputOrID.value);
     return;
   }
   // PROTOCOL 2
   if (typeof inputOrID === 'string') {
-    u_UpdateInputs(inputOrID, value);
+    u_UpdatePaddleInputs(inputOrID, value);
     return;
   }
+  // UNKNOWN INPUT
   console.warn(`bad game input`, inputOrID);
 
   // HELPER FUNCTION
-  function u_UpdateInputs(id, value) {
+  function u_UpdatePaddleInputs(id, value) {
+    if (typeof value !== 'number') {
+      console.warn(`${inputOrID}: ${value} is not a number. Bad input!`);
+      return;
+    }
+    // normalize
+    if (value < PADDLE_INPUT_MIN) {
+      value = PADDLE_INPUT_MIN;
+    }
+    if (value > PADDLE_INPUT_MAX) {
+      value = PADDLE_INPUT_MAX;
+    }
+    const fValue = value / (PADDLE_INPUT_MAX - PADDLE_INPUT_MIN);
+    if (DBG) console.log('normalized', fValue.toFixed(2));
+    // rexpand to pixel coordinates
+    // range includes the hole for paddings in the corners
+    const gap = PADDLE_HOLE * BALL_SIZE;
+    const range = HEIGHT - PADDLE_UNITS * BALL_SIZE - gap - gap;
+    value = fValue * range + gap;
+    if (DBG) console.log(`${range} ${fValue.toFixed(2)} -> ${value.toFixed(2)}`);
+
     switch (id) {
       case 'L':
         INPUTS.pad1 = value;
