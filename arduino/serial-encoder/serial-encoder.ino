@@ -89,16 +89,20 @@ void doEncoderA()
   {
     // check channel B to see which way encoder is turning
     if (digitalRead(ENCODER0PINB) == LOW)
-      incrementPos();
-    else
+      //incrementPos();
       decrementPos();
+   else
+      //decrementPos();
+      incrementPos();
   }
   else
   { // Must be a high-to-low transistion
     if (digitalRead(ENCODER0PINB) == HIGH)
-      incrementPos();
-    else
+      //incrementPos();
       decrementPos();
+    else
+      //decrementPos();
+      incrementPos();
   }
 }
 
@@ -110,15 +114,19 @@ void doEncoderB()
   {
     // check channel A to see which way encoder is turning
     if (digitalRead(ENCODER0PINA) == HIGH)
-      incrementPos();
-    else
+      //incrementPos();
       decrementPos();
+    else
+      //decrementPos();
+      incrementPos();
   }
   else
   { // Must be a high-to-low transistion
     if (digitalRead(ENCODER0PINA) == LOW)
-      incrementPos();
-    else
+      //incrementPos();
       decrementPos();
+    else
+      //decrementPos();
+      incrementPos();
   }
 }
