@@ -7,6 +7,7 @@
 // CONSTANTS
 #define MAX 65535
 #define MIN 0
+#define MAXSCALE 29000
 
 // GLOBALS
 volatile unsigned int encoder0Pos = 0;
@@ -55,7 +56,7 @@ void loop()
 #ifdef HOMESWITCH0
   if (digitalRead(HOMESWITCH0) == LOW)
   {
-    encoder0Pos = 0;
+    encoder0Pos = MAXSCALE;
   }
 #endif
 
@@ -89,16 +90,16 @@ void doEncoderA()
   {
     // check channel B to see which way encoder is turning
     if (digitalRead(ENCODER0PINB) == LOW)
-      incrementPos();
-    else
       decrementPos();
+   else
+      incrementPos();
   }
   else
   { // Must be a high-to-low transistion
     if (digitalRead(ENCODER0PINB) == HIGH)
-      incrementPos();
-    else
       decrementPos();
+    else
+      incrementPos();
   }
 }
 
@@ -110,15 +111,15 @@ void doEncoderB()
   {
     // check channel A to see which way encoder is turning
     if (digitalRead(ENCODER0PINA) == HIGH)
-      incrementPos();
-    else
       decrementPos();
+    else
+      incrementPos();
   }
   else
   { // Must be a high-to-low transistion
     if (digitalRead(ENCODER0PINA) == LOW)
-      incrementPos();
-    else
       decrementPos();
+    else
+      incrementPos();
   }
 }
