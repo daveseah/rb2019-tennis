@@ -1,4 +1,14 @@
-const { PADDLE_UNITS, WIDTH, HEIGHT, KEY_UP, KEY_DOWN, BALL_SIZE } = require('./constants');
+const {
+  PADDLE_UNITS,
+  WIDTH,
+  HEIGHT,
+  KEY_UP,
+  KEY_DOWN,
+  BALL_SIZE,
+  PADDLE_HOLE,
+  PADDLE_COLOR,
+  BALL_COLOR
+} = require('./constants');
 
 /// CLASS: Paddle /////////////////////////////////////////////////////////////
 /// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -39,7 +49,11 @@ class Player extends Paddle {
     } else if (paddle !== undefined && paddle !== null) {
       this.y = Math.max(Math.min(paddle, HEIGHT - this.height), 0);
     } else if (ball) {
+      const gap1 = PADDLE_HOLE * BALL_SIZE;
+      const gap2 = HEIGHT - this.height - gap1;
       let desty = ball.y - (this.height - BALL_SIZE) * 0.5 + twitch;
+      if (desty < gap1) desty = gap1;
+      if (desty > gap2) desty = gap2;
       this.y += (desty - this.y) * autotrack;
       this.y = Math.max(Math.min(this.y, HEIGHT - this.height), 0);
     }

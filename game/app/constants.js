@@ -4,7 +4,10 @@ const ASPECT = 4 / 3; // aspect ratio (usuallyl 4/3 or 16/9)
 const PADDLE_UNITS = 7; // height of paddle in BALL units
 const SCORE_MAX = 10; // maximum score
 const X_SPEED = 0.5; // ball speed multiplier (do not exceed 2.5)
-const X_SCORE = 1; // score height multiplier
+const X_SCORE = 0.5; // score height multiplier
+const X_GAP = 1.5; // the "hole" at top/bottom in ball units
+const BALL_COLOR = '#FFFFFF';
+const PADDLE_COLOR = '#222';
 
 // other constants
 let CONSTANTS = {
@@ -21,7 +24,9 @@ let CONSTANTS = {
   SCORE_SIZE: null, // calculated below
   KEY_UP: 38,
   KEY_DOWN: 40,
-  PADDLE_HOLE: 0, // "unreachable" paddle area (multiple of ball size)
+  BALL_COLOR,
+  PADDLE_COLOR,
+  PADDLE_HOLE: X_GAP, // "unreachable" paddle area (multiple of ball size)
   PADDLE_INPUT_MIN: 0, // minimum DEVICE units to clamp input
   PADDLE_INPUT_MAX: 29000 // maximum DEVICE units to clamp input
 };

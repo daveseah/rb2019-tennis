@@ -29,7 +29,9 @@ const {
   PADDLE_UNITS,
   PADDLE_INPUT_MIN,
   PADDLE_INPUT_MAX,
-  PADDLE_HOLE
+  PADDLE_HOLE,
+  BALL_COLOR,
+  PADDLE_COLOR
 } = require('./constants');
 let INPUTS = {};
 
@@ -160,12 +162,14 @@ function Draw(ctx) {
   // clear the playfield
   ctx.fillRect(0, 0, WIDTH, HEIGHT);
   ctx.save();
-  ctx.fillStyle = '#fff';
   // draw game elements
+  ctx.fillStyle = BALL_COLOR;
   BALL.Draw(ctx);
+  ctx.fillStyle = PADDLE_COLOR;
   P1.Draw(ctx);
   P2.Draw(ctx);
   // draw the score
+  ctx.fillStyle = BALL_COLOR;
   SCOREBOARD.Draw(ctx);
   // draw the net
   var w = NET_WIDTH;
