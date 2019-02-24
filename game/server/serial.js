@@ -52,7 +52,7 @@ WSS.on('connection', ws => {
   ws.id = ++CLIENT_ID_COUNTER;
   CLIENT_SOCKETS[ws.id] = ws;
   // if got this far, we can save our socket connection and bind serial ports
-  console.log(`SOCKET ! CONNECTED ${ws.id}`);
+  console.log(`SOCKET + CONNECTED ${ws.id}`);
   // tell client that they've connected
   ws.send(JSON.stringify({ info: 'SERVER:CONNECTED', sid: ws.id }));
 
@@ -69,7 +69,7 @@ WSS.on('connection', ws => {
     let id = ws.id;
     if (id) {
       delete CLIENT_SOCKETS[ws.id];
-      console.log(`SOCKET ~ DISCONNECTED ${ws.id}`);
+      console.log(`SOCKET - DISCONNECTED ${ws.id}`);
     }
   });
 });
