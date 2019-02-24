@@ -52,8 +52,6 @@ function BootSystem() {
   m_socket.onopen = () => {
     // replace alert with 'user must click to enable audio'
     AUDIO.ClickToEnable(m_canvas);
-    let alert = document.getElementById('alert');
-    alert.textContent = 'click playfield to play sound and remove this alert';
     // initialize the game
     Send({ info: 'test client->server connection' });
     InitGame();

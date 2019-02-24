@@ -3,6 +3,10 @@ let oscillator;
 
 window.onload = function() {
   audioCtx = new AudioContext();
+  audioCtx.suspend().then(function() {
+    let alert = document.getElementById('alert');
+    alert.textContent = 'click playfield to play sound and remove this alert';
+  });
 };
 
 function PlayOscillator(hz, duration) {
