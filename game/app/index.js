@@ -9,7 +9,8 @@ const AUDIO = require('./audio');
 let m_canvas, m_ctx;
 let m_keystate;
 // socket connections
-const m_socket_url = 'ws://localhost:8080';
+const m_socket_url = `ws://${location.hostname}`;
+const m_socket_port = 8080;
 let m_socket;
 // module-wide shared constants
 const { WIDTH, HEIGHT } = require('./constants');
@@ -37,7 +38,9 @@ function BootSystem() {
     GAME.SetInputs(m_keystate);
   });
   // create socket connection to server
-  m_socket = new WebSocket(m_socket_url);
+  const endpoint = `${m_socket_url}:${m_socket_port}`;
+  console.log(`boot: connecting to socket ${endpoint}`);
+  m_socket = new WebSocket(endpoint);
   // case 1: run game on successful connection
   m_socket.onopen = () => {
     // replace alert with 'user must click to enable audio'
@@ -45,7 +48,7 @@ function BootSystem() {
     let alert = document.getElementById('alert');
     alert.textContent = 'click playfield to play sound and remove this alert';
     // initialize the game
-    m_socket.send('client : open connection');
+    Send({ info: 'test client->server connection' });
     InitGame();
     StepGame();
   };
@@ -55,11 +58,25 @@ function BootSystem() {
   };
   // case 3: received a control from server
   m_socket.onmessage = e => {
-    // HACK: expects an integer; ignore non numbers
     const msg = e.data;
-    let val = parseInt(msg, 10);
-    if (!isNaN(val)) GAME.SetInputs({ pad1: val });
+    if (msg.charAt(0) !== '{') {
+      console.warn(`socket expected JSON, got ${msg}`);
+      throw Error('abort game');
+    }
+    // if got this far, probably valid json
+    let { id, value } = JSON.parse(msg);
+    if (!isNaN(value)) {
+      GAME.SetInputs({ id, value });
+    }
   };
+}
+/// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+function Send(pktObj) {
+  if (m_socket) {
+    const json = JSON.stringify(pktObj);
+    console.log('SOCKET SEND', json);
+    m_socket.send(json);
+  }
 }
 /// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 /*/ Initialize game data structures
@@ -84,7 +101,7 @@ function StepGame() {
 if (module.hot) {
   // warn server that client is reloading
   module.hot.dispose(function() {
-    m_socket.send('client : reloaded page');
+    Send({ info: 'client reloaded' });
   });
   // reload the entire page to keep multiple
   // index.js instances from running until

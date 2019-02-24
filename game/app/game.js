@@ -6,6 +6,8 @@
 
 \*\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ * /////////////////////////////////////*/
 
+const DBG = false;
+
 /// LOAD CLASSES //////////////////////////////////////////////////////////////
 /// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 const { Player, AIPlayer } = require('./controllers');
@@ -18,7 +20,7 @@ const AUDIO = require('./audio');
 
 /// GLOBALS //////////////////// //////////////////////////////////////////////
 /// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-const { WIDTH, HEIGHT, NET_WIDTH } = require('./constants');
+const { WIDTH, HEIGHT, NET_WIDTH, BALL_SIZE, PADDLE_UNITS } = require('./constants');
 let INPUTS = {};
 
 /// CREATE PIECES /////////////////////////////////////////////////////////////
@@ -27,13 +29,27 @@ let P1 = new Player({ side: -1 });
 let P2 = new Player({ side: 1 });
 let BALL = new Ball();
 let SCOREBOARD = new Scoreboard();
+let ADVANTAGE = 1;
+let SPAZ_P1 = 0; // LEFT
+let SPAZ_P2 = 0; // RIGHT
+let SPAZ_T1 = null;
+let SPAZ_T2 = null;
 
 /// SET INPUT /////////////////////////////////////////////////////////////////
 /// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 function SetInputs(input) {
-  INPUTS.keystate = input.keystate;
-  INPUTS.pad1 = input.pad1;
-  INPUTS.pad2 = input.pad2;
+  if (input.keystate) INPUTS.keystate = input.keystate;
+  if (input.id)
+    switch (input.id) {
+      case 'L':
+        INPUTS.pad1 = input.value;
+        break;
+      case 'R':
+        INPUTS.pad2 = input.value;
+        break;
+      default:
+        console.warn(`unknown input id ${input.id}`);
+    }
 }
 
 /// INIT //////////////////////////////////////////////////////////////////////
@@ -41,14 +57,34 @@ function SetInputs(input) {
 function Init() {
   INPUTS = {};
   SCOREBOARD.Reset();
+  ADVANTAGE = 1 - ADVANTAGE;
 }
 
 /// START //////////////////////////////////////////////////////////////////////
 /// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 function Start(side = -1) {
   BALL.Serve(side);
+  SPAZ_T1 = setTimeout(SpazP1, 500);
+  SPAZ_T2 = setTimeout(SpazP2, 500);
 }
-
+let tout;
+const mult = (PADDLE_UNITS * BALL_SIZE) / 2;
+function SpazP1() {
+  if (SPAZ_T1) clearTimeout(SPAZ_T1);
+  SPAZ_P1 = Math.floor((0.5 - Math.random()) * mult);
+  tout = 100 + Math.random() * 1000;
+  if (DBG) console.log('spazP1', SPAZ_P1);
+  // console.log('P1 |', SPAZ_P1);
+  SPAZ_T1 = setTimeout(SpazP1, tout);
+}
+function SpazP2() {
+  if (SPAZ_T2) clearTimeout(SPAZ_T2);
+  SPAZ_P2 = Math.floor((0.5 - Math.random()) * mult);
+  tout = 1000 + Math.random() * 2000;
+  if (DBG) console.log('spazP2', SPAZ_P2);
+  // console.log('| P2', SPAZ_P2);
+  SPAZ_T2 = setTimeout(SpazP2, tout);
+}
 /// UPDATE ////////////////////////////////////////////////////////////////////
 /// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 function Update() {
@@ -56,8 +92,18 @@ function Update() {
   if (status) {
     HandleGameEvent(status);
   }
-  P1.Update({ paddle: INPUTS.pad1, ball: BALL, autotrack: 0.01 });
-  P2.Update({ paddle: INPUTS.pad2, ball: BALL, autotrack: 0.1 });
+  P1.Update({
+    paddle: INPUTS.pad1,
+    ball: BALL,
+    twitch: SPAZ_P1,
+    autotrack: ADVANTAGE ? 0.25 : 0.1
+  });
+  P2.Update({
+    paddle: INPUTS.pad2,
+    ball: BALL,
+    twitch: SPAZ_P2,
+    autotrack: ADVANTAGE ? 0.1 : 0.25
+  });
 }
 
 /// DRAW //////////////////////////////////////////////////////////////////////

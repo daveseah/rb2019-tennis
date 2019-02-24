@@ -1,8 +1,8 @@
 // PIN ASSIGNMENTS
-#define ENCODER0PINA  2   // Must support interupts
-#define ENCODER0PINB  3   // Must support interupts
-#define HOMESWITCH0   4   // Comment out if no home switch
-#define LOCSWITCH0    5   // Comment out if no location switch
+#define ENCODER0PINA 2 // Must support interupts
+#define ENCODER0PINB 3 // Must support interupts
+//#define HOMESWITCH0 4  // Comment-out if no HOMESWITCH
+#define LOCSWITCH0 5 // Controller L/R detect pin; default to L
 
 // CONSTANTS
 #define MAX 65535
@@ -10,8 +10,7 @@
 
 // GLOBALS
 volatile unsigned int encoder0Pos = 0;
-volatile char controlLoc = 'L';
-
+volatile char controlLoc = 'X'; // overwritten during setup
 
 // SETUP
 void setup()
@@ -20,10 +19,10 @@ void setup()
   pinMode(ENCODER0PINB, INPUT);
 #ifdef HOMESWITCH0
   pinMode(HOMESWITCH0, INPUT);
-  #endif
-  #ifdef LOCSWITCH0
+#endif
+#ifdef LOCSWITCH0
   pinMode(LOCSWITCH0, INPUT);
-  #endif
+#endif
 
   // encoder pin on interrupt 0 (pin 2)
   attachInterrupt(0, doEncoderA, CHANGE);
@@ -31,18 +30,21 @@ void setup()
   // encoder pin on interrupt 1 (pin 3)
   attachInterrupt(1, doEncoderB, CHANGE);
 
-  if (digitalRead(LOCSWITCH0) == LOW) {
+  Serial.begin(115200);
+  Serial.println("!BP2019-ENCODER");
+  if (digitalRead(LOCSWITCH0) == LOW)
+  {
     controlLoc = 'R';
+    Serial.println("!Starting Right Controller");
   }
-
-  Serial.begin (115200);
-  Serial.println ("BP2019-ENCODER");
-  if (digitalRead(LOCSWITCH0) == LOW) {
-    controlLoc = 'R';
-    Serial.println ("Starting Right Controller");
-  } else {
-    Serial.println ("Starting Left Controller");
+  else
+  {
+    controlLoc = 'L';
+    Serial.println("!Starting Left Controller");
   }
+#ifndef HOMESWITCH0
+  Serial.println("!WARNING ! HOMESWITCH0 IS DISABLED");
+#endif
 }
 
 // MAIN RUN-LOOP
@@ -61,7 +63,7 @@ void loop()
   // ex: "R3034\n" for right controller
   // ex: "L3034\n" for left controller
   Serial.print(controlLoc);
-  Serial.println (encoder0Pos, DEC);
+  Serial.println(encoder0Pos, DEC);
 }
 
 // FUNCTIONS

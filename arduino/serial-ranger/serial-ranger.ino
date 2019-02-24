@@ -17,12 +17,11 @@ Some code and wiring inspired by http://en.wikiversity.org/wiki/User:Dstaub/robo
 
 void setup()
 {
-  Serial.begin(9600);
   pinMode(trigPin, OUTPUT);
   pinMode(echoPin, INPUT);
   pinMode(led, OUTPUT);
   pinMode(led2, OUTPUT);
-  Serial.begin(9600);
+  Serial.begin(115200);
   Serial.println("\nDISTANCE");
 }
 

@@ -1,30 +1,22 @@
 ## BP2019 Jupiter Hall Pong Exhibit
 
-CURRENT PROGRESS:
+This is a PONG game that can be controlled via the serial port connection by connected Arduinos. The Pong game is written in Javascript, using a NodeJS server for serial communication to the Arduino. The NodeJS server provides a websocket connection for the client Pong game running in a web browser, and receives JSON controller data. 
 
-- simple communication proof of concept
-- refactored pong sample source into modular JS
-- two player self-playing mode with paddle 0 override
-- oscillator-based sound effects
-- score keeping display using 8x4 character matrix
-- visible prompt to start game server
-- visible prompt to click screen for sound
-
-TO DO:
-
-- implement Ryan's serial controller protocol
+Many game and display parameters can be set by modifying `constants.js`. 
 
 ### First Time Installation
 
+Here's a **demo installation video**:
+
+[![](http://img.youtube.com/vi/POdXbry-Qc4/0.jpg)](http://www.youtube.com/watch?v=POdXbry-Qc4 "Installation Demo")
+
 #### Prerequisites to install
 
-- NodeJS
-- Git
-- Arduino IDE
+Note: these instructions presume you are using a Unix-y system like Linux or MacOS. These instructions are tested on MacOS Mojave. You *CAN* [run on Windows 10 WSL or via Scoop](https://github.com/daveseah/bp2019-pong/wiki/Installing-on-Windows), but the serial port commands currently don't work.
+
+You will need to have **NodeJS** and **Git** installed. To program the Arduino board, you'll need the **Arduino IDE** but the client/server will run without connected hardware.
 
 #### Setup
-
-Note: these instructions presume you are using a Unix-y system like Linux or MacOS. These instructions are tested on MacOS Mojave. It may be possible to use Windows SUbsystem for Linux (WSL) on Windows 10, but I have not tested it.
 
 Get the Repo:
 
@@ -38,30 +30,27 @@ Configure the web client software:
 - `npm ci`
 - if you are using nvm, type `nvm use`
 
-Program the Arduino (if you have one):
+### Run the Game Server
 
-- upload `arduino/serial-encoder` to your Arduino board using the Arduino IDE
+HARDWARE CONFIGURATION
 
-### Running the Test Server
+If you have functioning hardware, you can change the source code to match your Arduino configuration. The game server will gracefully fail if no hardware is detected. The following instructions assume you have working hardware.
 
-CONFIGURATION
-
-If you have functioning hardware, you can change the source code to match your Arduino configuration.
+Program your Arduino with the contents of `arduino/serial-encoder` with the Arduino IDE if you haven't already, then modify the server code:
 
 - Make sure you are in the `bp2019-pong/game` directory
-- In the terminal, `npm run list:ports` to see the list of available serial ports
+- In the terminal, `npm run list:ports` to see the list of available serial ports (note: this code **does not work on Windows** using either WSL or Scoop)
 - Find the _serial port path_ for your arduino board and copy it to the clipboard.
-- Modify the file `server/serial.js` so the constant `SERIAL_PATH` is set to the serial port path.
+- Edit `server/serial.js` in the `CONFIG` section at top, adding `COM1` and `COM2` paths to your serial ports. 
 
-RUN THE SERVER
+Now to run the SERVER itself:
 
 - Open terminal window, and make sure you are in the `bp2019-pong/game` directory
-- With Arduino connected, type `npm run server`.
-- As you diddle the encoder, you should see number output in the terminal window.
-- NOTE: If the Test Client isn't running, you'll see a "client offline" status message
-- NOTE: The values are sent only if a change is detected
+- `npm run server`
+- You will see some text appear describing what the server is doing. If you have compatible hardware plugged into the USB port and you have configured `server/serial.js`, you should see a successful connection message.
+- Next you will run the Game Client to see if the data is being received
 
-### Running the Test Client
+### Run the Game Client
 
 Open a SECOND TERMINAL WINDOW, then:
 
@@ -69,6 +58,11 @@ Open a SECOND TERMINAL WINDOW, then:
 - `npm run client`
 - Open Chrome and browse to `localhost:3000`
 - Twiddle the encoder knob to see if the paddle moves
+- Click on the play field to enable sound (this is a browser-enforced requirement)
 
-To enter FULL SCREEN MODE, go to the Chrome browser's VIEW MENU and disable _Always Show Toolbar_ and _Always Show Bookmarks_, then choose _Full Screen Mode_.
-The MacOS shortcut for full screen mode is `CTRL-CMD-F`.
+The game runs in an attract mode, AI players that take turns beating each other. If an Arduino paddle controller is moved, however, it will take over the player. When a player reachers 9 points, the game is over and the player reverts to AI control unless the Arduino paddle is again moved.
+
+#### Operating Notes
+
+* To enter FULL SCREEN MODE, go to the Chrome browser's VIEW MENU and disable _Always Show Toolbar_ and _Always Show Bookmarks_, then choose _Full Screen Mode_. The MacOS shortcut for full screen mode is `CTRL-CMD-F`.
+* You can change the screen size by editing `game/constants.js` and adjusting the WIDTH and HEIGHT. The game board and elements sizes are defined relative to WIDTH and HEIGHT.
