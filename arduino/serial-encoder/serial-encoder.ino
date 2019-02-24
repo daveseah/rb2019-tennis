@@ -8,6 +8,7 @@
 #define MAX 65535
 #define MIN 0
 #define MAXSCALE 29000
+
 // GLOBALS
 volatile unsigned int encoder0Pos = 0;
 volatile char controlLoc = 'X'; // overwritten during setup
