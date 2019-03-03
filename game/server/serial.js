@@ -75,5 +75,8 @@ WSS.on('connection', ws => {
 });
 //
 
-console.log('SERVER ! WEBSOCKET SERVICE on 8080');
-console.log(`\n****** ! OPEN 'http://${IP.address()}:3000' in CHROME BROWSER\n`);
+console.log(`SERVER ! CONTROLLER SOCKET SERVER AT 'ws://${IP.address()}:8080'`);
+console.log(`       ! make sure DISPLAY SERVER is configured to use this server`);
+console.log(`       ! by editing ALT_SOCKET and ALT_SOCKET_ON constants in index.js`);
+
+console.log(`\n****** ! Run the display server and open the game in CHROME BROWSER`);
