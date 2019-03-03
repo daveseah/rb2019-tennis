@@ -1,12 +1,11 @@
+const ALERT = require('./log');
 let audioCtx;
 let oscillator;
+let m_timer;
 
 window.onload = function() {
   audioCtx = new AudioContext();
-  audioCtx.suspend().then(function() {
-    let alert = document.getElementById('alert');
-    alert.textContent = 'click playfield to play sound and remove this alert';
-  });
+  audioCtx.suspend();
 };
 
 function PlayOscillator(hz, duration) {
@@ -20,14 +19,21 @@ function PlayOscillator(hz, duration) {
 }
 
 function ClickToEnable(element) {
-  element.addEventListener('click', function() {
-    const alert = document.getElementById('alert');
-    if (alert.hidden) return;
-    alert.hidden = true;
+  function handle() {
     audioCtx.resume().then(() => {
-      console.log('User enabled Audio by clicking canvas');
+      ALERT.Clear();
+      ALERT.PrLn('AUDIO ENABLED');
+      ALERT.PrHead('GAME ON!');
+      element.removeEventListener('click', handle);
+      m_timer = setTimeout(() => {
+        ALERT.Hide();
+        clearTimeout(m_timer);
+        m_timer = null;
+        element.style.cursor = 'none';
+      }, 5000);
     });
-  });
+  }
+  element.addEventListener('click', handle);
 }
 
 function Paddle() {

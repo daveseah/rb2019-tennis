@@ -2,16 +2,17 @@
 /// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // const ALT_SOCKET = null; // no remote server
 const ALT_SOCKET = 'ws://192.168.2.221'; // socketserver is not localhost
-const ALT_SOCKET_ON = false;
-const DBG = false;
+const ALT_SOCKET_ON = true;
 
 /// LIBRARIES /////////////////////////////////////////////////////////////////
 /// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 const GAME = require('./game');
 const AUDIO = require('./audio');
+const ALERT = require('./log');
 
 /// CONSTANTS and GLOBALS /////////////////////////////////////////////////////
 /// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+const DBG = false;
 // drawing surfaces
 let m_canvas, m_ctx;
 let m_keystate;
@@ -19,6 +20,7 @@ let m_keystate;
 const m_socket_url = ALT_SOCKET_ON ? ALT_SOCKET : `ws://${location.hostname}`;
 const m_socket_port = 8080;
 let m_socket;
+let m_timer;
 // module-wide shared constants
 const { WIDTH, HEIGHT } = require('./constants');
 
@@ -27,13 +29,23 @@ const { WIDTH, HEIGHT } = require('./constants');
 /*/ Initialize Game Playfields and keyboard inputs, and connect to server
 /*/
 function BootSystem() {
+  ALERT.PrHead('Happy Birthday Ralph Baer!');
+  ALERT.PrLn('BOOTING SYSTEM: JUPITER HALL RB-PONG-2019');
+  boot_CreateCanvas();
+  boot_ConnectKeyboard();
+  boot_StartGameWithSocketConnect();
+}
+/** boot: create graphic surface *********************************************/
+function boot_CreateCanvas() {
   // create, initiate and append game canvas
   m_canvas = document.createElement('canvas');
   m_canvas.width = WIDTH;
   m_canvas.height = HEIGHT;
   m_ctx = m_canvas.getContext('2d');
   document.body.appendChild(m_canvas);
-
+}
+/** boot: add keyboard input handlers ****************************************/
+function boot_ConnectKeyboard() {
   // keep track of keyboard presses
   m_keystate = {};
   document.addEventListener('keydown', function(evt) {
@@ -44,28 +56,61 @@ function BootSystem() {
     delete m_keystate[evt.keyCode];
     GAME.SetInputs(m_keystate);
   });
+}
+/** boot: add remote controller websocket handlers ***************************/
+function boot_StartGameWithSocketConnect() {
   // create socket connection to server
   const endpoint = `${m_socket_url}:${m_socket_port}`;
-  console.log(`boot: connecting to socket ${endpoint}`);
+  if (ALT_SOCKET_ON) {
+    ALERT.PrWarn(
+      'ALT_SOCKET_ON=TRUE. Make sure index.js:ALT_SOCKET is <br/>set to correct URL and remote server is running <br/>or connection will fail.'
+    );
+    let count = 0;
+    m_timer = setInterval(() => {
+      ALERT.Pr('.');
+      if (++count < 5) return;
+      ALERT.PrWarn('TIMEOUT');
+      ALERT.PrWarn('Restarting connection process in 5 seconds');
+      Reboot();
+    }, 3000);
+  }
+  ALERT.Pr(`Connecting to Controller at ${endpoint}...`);
   m_socket = new WebSocket(endpoint);
+
   // case 1: run game on successful connection
   m_socket.onopen = () => {
-    // replace alert with 'user must click to enable audio'
-    AUDIO.ClickToEnable(m_canvas);
+    ALERT.PrLn(`CONNECTED!`);
+    ALERT.PrLn(`<br/>*** CONTROLLER LINK ESTABLISHED ***`);
+    clearInterval(m_timer);
+    m_timer = setTimeout(() => {
+      ALERT.Clear();
+      // replace alert with 'user must click to enable audio'
+      AUDIO.ClickToEnable(document.body);
+      ALERT.PrWarn(`<br/>* click the screen to enable sound *`);
+    }, 7000);
     // initialize the game
     Send({ info: 'test client->server connection' });
     InitGame();
     StepGame();
   };
+
   // case 2: server isn't running, so alert and retry
-  m_socket.onerror = error => {
-    console.log(`WebSocket error:`, error);
+  m_socket.onerror = event => {
+    clearInterval(m_timer);
+    m_timer = null;
+    ALERT.PrWarn(`SOCK_ERR`);
   };
-  /***************************************************************************\
-    case 3: received a control from server
-    we're expecting JSON data from the socket server with the properties
-    id or value
-  \***************************************************************************/
+
+  // case 3: server went down
+  m_socket.onclose = event => {
+    clearInterval(m_timer);
+    m_timer = null;
+    ALERT.Show();
+    ALERT.PrWarn(`<br/>* CONTROL SERVER CONNECTION ERROR (CODE ${event.code}) - REBOOTING *`);
+    Reboot();
+  };
+
+  // case 4: get a message from the controller server
   m_socket.onmessage = e => {
     const msg = e.data;
     const fchar = msg.charAt(0);
@@ -113,6 +158,12 @@ function StepGame() {
   GAME.Draw(m_ctx);
   window.requestAnimationFrame(StepGame, m_canvas);
 }
+function Reboot() {
+  clearInterval(m_timer);
+  m_timer = setTimeout(() => {
+    window.location.reload();
+  }, 5000);
+}
 
 /// DEV: LIVE RELOADING ///////////////////////////////////////////////////////
 /// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -133,4 +184,10 @@ if (module.hot) {
 
 /// START THE GAME ////////////////////////////////////////////////////////////
 /// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-BootSystem();
+window.addEventListener('load', () => {
+  BootSystem();
+});
+
+/// EXPORT (to make HMR happy) ////////////////////////////////////////////////
+/// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+module.export = BootSystem;
