@@ -86,7 +86,13 @@ function boot_StartGameWithSocketConnect() {
       ALERT.Clear();
       // replace alert with 'user must click to enable audio'
       AUDIO.ClickToEnable(document.body);
-      ALERT.PrWarn(`<br/>* click the screen to enable sound *`);
+      ALERT.PrWarn(
+        `<br/>* click the screen to enable sound<br/><span style="font-size:smaller">* this message will self-destruct in 10 seconds</span>`
+      );
+      let temp_timeout = setTimeout(() => {
+        clearTimeout(temp_timeout);
+        ALERT.Hide();
+      }, 10000);
     }, 7000);
     // initialize the game
     Send({ info: 'test client->server connection' });
@@ -106,7 +112,7 @@ function boot_StartGameWithSocketConnect() {
     clearInterval(m_timer);
     m_timer = null;
     ALERT.Show();
-    ALERT.PrWarn(`<br/>* CONTROL SERVER CONNECTION ERROR (CODE ${event.code}) - REBOOTING *`);
+    ALERT.PrWarn(`<br/>* CONTROL SERVER CONNECTION ERROR (CODE ${event.code}) <br/>* REBOOTING...`);
     Reboot();
   };
 
