@@ -12,9 +12,9 @@ Here's a **demo installation video**:
 
 #### Prerequisites to install
 
-Note: these instructions presume you are using a Unix-y system like Linux or MacOS. [These instructions are tested on MacOS Mojave](https://github.com/daveseah/bp2019-pong/wiki/Installing-on-MacOS). You *CAN* [run on Windows 10 WSL or via Scoop](https://github.com/daveseah/bp2019-pong/wiki/Installing-on-Windows), but the serial port "list" command does not yet work.
+Note: these instructions presume you are using a Unix-y system like Linux or MacOS. [These instructions are tested on MacOS Mojave](https://github.com/daveseah/bp2019-pong/wiki/Installing-on-MacOS). You *CAN* [run on Windows 10 WSL or via Scoop](https://github.com/daveseah/bp2019-pong/wiki/Installing-on-Windows), but the serial port "list:ports" command does not yet work.
 
-You will need to have **NodeJS** and **Git** installed. To program the Arduino board, you'll need the **Arduino IDE** but the client/server will run without connected hardware.
+You will need to have **NodeJS** and **Git** installed. To program the Arduino board, you'll need the **Arduino IDE** but the client/server will run in "autoplay" mode without connected hardware.
 
 #### Setup
 
@@ -25,7 +25,7 @@ Get the Repo:
 - `git clone git@github.com:daveseah/bp2019-pong.git`
 - `cd bp2019-pong/game`
 
-Configure the web client software:
+One-time configuration the web client development software:
 
 - `npm ci`
 - if you are using nvm, type `nvm use`
@@ -66,6 +66,7 @@ The game runs in an attract mode, AI players that take turns beating each other.
 
 * To enter FULL SCREEN MODE, go to the Chrome browser's VIEW MENU and disable _Always Show Toolbar_ and _Always Show Bookmarks_, then choose _Full Screen Mode_. The MacOS shortcut for full screen mode is `CTRL-CMD-F`.
 * You can change the screen size by editing `game/constants.js` and adjusting the WIDTH and HEIGHT. The game board and elements sizes are defined relative to WIDTH and HEIGHT.
+* You can run the server on a separate computer from game client. In `serial.js` change the `CONFIG` to match your network and serial port configuration and select it. NOTE: The client/server code is not optimized AT ALL, so weaker servers (e.g. Raspberry Pi) may not handle the load well.
 
 ## Credits and License
 
