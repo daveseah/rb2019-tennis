@@ -75,7 +75,7 @@ This code is released under the **MIT license**.
 * The main pong game logic is based on Max Wihlborg's cool [YouTube tutorial](https://www.youtube.com/watch?v=KApAJhkkqkA) ([github](https://github.com/maxwihlborg/youtube-tutorials/blob/master/pong/index.html)). 
 * Conversion to modular Javascript, Arduino, and network coding by Dave Seah and Ryan Sutton. 
 
-Here's a video showing the construction of the game exhibit over 5 weeks: 
+Here's a video showing the construction of the game exhibit: 
 
 [![](http://img.youtube.com/vi/RF0mv2btJL0/0.jpg)](http://www.youtube.com/watch?v=RF0mv2btJL0 "Construction Montage")
 
