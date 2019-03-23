@@ -67,9 +67,11 @@ The game runs in an attract mode, AI players that take turns beating each other.
 * To enter FULL SCREEN MODE, go to the Chrome browser's VIEW MENU and disable _Always Show Toolbar_ and _Always Show Bookmarks_, then choose _Full Screen Mode_. The MacOS shortcut for full screen mode is `CTRL-CMD-F`.
 * You can change the screen size by editing `game/constants.js` and adjusting the WIDTH and HEIGHT. The game board and elements sizes are defined relative to WIDTH and HEIGHT.
 
-## CREDITS
+## Credits and License
 
-The main pong game logic is based on Max Wihlborg's [YouTube tutorial](https://www.youtube.com/watch?v=KApAJhkkqkA) ([github](https://github.com/maxwihlborg/youtube-tutorials/blob/master/pong/index.html)). 
+The main pong game logic is based on Max Wihlborg's cool [YouTube tutorial](https://www.youtube.com/watch?v=KApAJhkkqkA) ([github](https://github.com/maxwihlborg/youtube-tutorials/blob/master/pong/index.html)). 
+
+Conversion to modular Javascript, Arduino, and network coding by Dave Seah and Ryan Sutton. This code is released under the MIT license.
   
   
 
