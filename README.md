@@ -1,6 +1,6 @@
 ## BP2019 Jupiter Hall Pong Exhibit
 
-This is a PONG game that can be controlled via the serial port connection by connected Arduinos. The Pong game is written in Javascript, using a NodeJS server for serial communication to the Arduino. The NodeJS server provides a websocket connection for the client Pong game running in a web browser, and receives JSON controller data. 
+This is a PONG game that can be controlled via the serial port connected to two Arduino boards. The Pong game is written in Javascript, using a NodeJS server for serial communication to the Arduino. The NodeJS server provides a websocket connection for the client Pong game running in a web browser, and receives JSON controller data. 
 
 Many game and display parameters can be set by modifying `constants.js`. 
 
@@ -12,7 +12,7 @@ Here's a **demo installation video**:
 
 #### Prerequisites to install
 
-Note: these instructions presume you are using a Unix-y system like Linux or MacOS. These instructions are tested on MacOS Mojave. You *CAN* [run on Windows 10 WSL or via Scoop](https://github.com/daveseah/bp2019-pong/wiki/Installing-on-Windows), but the serial port commands currently don't work.
+Note: these instructions presume you are using a Unix-y system like Linux or MacOS. [These instructions are tested on MacOS Mojave](https://github.com/daveseah/bp2019-pong/wiki/Installing-on-MacOS). You *CAN* [run on Windows 10 WSL or via Scoop](https://github.com/daveseah/bp2019-pong/wiki/Installing-on-Windows), but the serial port commands currently don't work.
 
 You will need to have **NodeJS** and **Git** installed. To program the Arduino board, you'll need the **Arduino IDE** but the client/server will run without connected hardware.
 
