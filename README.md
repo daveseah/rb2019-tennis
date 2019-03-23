@@ -78,6 +78,7 @@ This code is released under the **MIT license**.
 Here's a video showing the construction of the game exhibit over 5 weeks: 
 
 [![](http://img.youtube.com/vi/RF0mv2btJL0/0.jpg)](http://www.youtube.com/watch?v=RF0mv2btJL0 "Construction Montage")
+
 https://youtu.be/RF0mv2btJL0
 
 
