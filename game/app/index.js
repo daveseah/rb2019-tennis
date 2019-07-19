@@ -2,7 +2,7 @@
 /// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // const ALT_SOCKET = null; // no remote server
 const ALT_SOCKET = 'ws://192.168.2.221'; // socketserver is not localhost
-const ALT_SOCKET_ON = true;
+const ALT_SOCKET_ON = false;
 
 /// LIBRARIES /////////////////////////////////////////////////////////////////
 /// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -113,6 +113,7 @@ function boot_StartGameWithSocketConnect() {
     m_timer = null;
     ALERT.Show();
     ALERT.PrWarn(`<br/>* CONTROL SERVER CONNECTION ERROR (CODE ${event.code}) <br/>* REBOOTING...`);
+    ALERT.Pr(`<br/>hint: did you start the controller server with<br><span style='color:#00FF00'>npm run server</span><br>in another terminal?`);
     Reboot();
   };
 
