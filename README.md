@@ -1,6 +1,6 @@
 ## RBD2019 Jupiter Hall TABLE TENNIS Exhibit
 
-This is a PONG-style game that can be controlled via the serial port connected to two Arduino boards, created for the Ralph Baer Day 2019 in Manchester, New Hampshire. It is modeled after the Atari PONG game, as usable source code for game logic was available (see [credits](#credits-and-license) below). I wasn't aware at the time that there was [considerable competitive conflict between Baer and Nolan Bushnell](https://en.wikipedia.org/wiki/Ralph_H._Baer), so a future revision of this codebase would move toward Baer's original *TABLE TENNIS* implementation or the ODYSSEY/ODYSSEY 2 version.
+This is a PONG-style game that can be controlled via the serial port connected to two Arduino boards, created for the Ralph Baer Day 2019 in Manchester, New Hampshire. It is modeled after the Atari PONG game, as usable source code for game logic was available (see [credits](#credits-and-license) below). I wasn't aware at the time that there was [considerable competitive conflict between Baer and Nolan Bushnell](https://en.wikipedia.org/wiki/Ralph_H._Baer), so a future revision of this codebase would move toward Baer's original *TABLE TENNIS* implementation on the [Magnavox Odyssey](http://www.pong-story.com/odyssey.htm).
 
 This project was implemented in Javascript, using a NodeJS server for serial communication to the Arduino. The NodeJS server provides a websocket connection for the client Pong game running in a web browser, and receives JSON controller data. 
 
