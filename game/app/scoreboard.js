@@ -2,7 +2,15 @@ const DBG = false;
 
 /// CONSTANTS ////////////////////////////////////////////////////////////////
 /// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-const { SCORE_X1, SCORE_X2, SCORE_Y, SCORE_SIZE, SCORE_MAX } = require('./constants');
+const { SCORE_X1, SCORE_X2, SCORE_Y, SCORE_SIZE, SCORE_MAX, BALL_SIZE } = require('./constants');
+const BALL_SIZE_2 = BALL_SIZE * 2;
+const blk = SCORE_SIZE;
+const YTOP = SCORE_Y - BALL_SIZE;
+const YBOT = YTOP + SCORE_SIZE * 8 + BALL_SIZE_2;
+const X1A = SCORE_X1 - BALL_SIZE;
+const X1B = X1A + SCORE_SIZE * 4 + BALL_SIZE_2;
+const X2A = SCORE_X2 - BALL_SIZE;
+const X2B = X2A + SCORE_SIZE * 4 + BALL_SIZE_2;
 
 /// CLASS: Scoreboard /////////////////////////////////////////////////////////
 /// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -14,6 +22,7 @@ class Scoreboard {
     this.scoreP1 = 0;
     this.scoreP2 = 0;
     this.winner = 0;
+    this.framecounter = 0;
   }
   //
   Score(player) {
@@ -39,19 +48,40 @@ class Scoreboard {
     }
   }
   //
-  Update(state) {}
+  Update(state) { }
   //
   Won() {
     return this.winner;
   }
   //
-  Draw(ctx) {
-    this.DrawDigit(ctx, SCORE_X1, SCORE_Y, this.scoreP1);
-    this.DrawDigit(ctx, SCORE_X2, SCORE_Y, this.scoreP2);
+  Draw(ctx, ball) {
+    this.framecounter++;
+    // first draw
+    if (this.framecounter === 1) {
+      console.log('scoredraw init');
+      this.DrawDigit(ctx, SCORE_X1, SCORE_Y, this.scoreP1);
+      this.DrawDigit(ctx, SCORE_X2, SCORE_Y, this.scoreP2);
+      return;
+    }
+    // otherwise draw
+    const x = ball.x;
+    const y = ball.y;
+    if (y > YBOT) return;
+    if (y < YTOP) return;
+    if (x < SCORE_X1) return;
+    if (x < X1A) return;
+    if (x > X2B) return;
+    if ((x > X1A) && (x < X1B)) {
+      this.DrawDigit(ctx, SCORE_X1, SCORE_Y, this.scoreP1);
+      console.log('scoredraw P1');
+    }
+    if ((x > X2A) && (x < X2B)) {
+      this.DrawDigit(ctx, SCORE_X2, SCORE_Y, this.scoreP2);
+      console.log('scoredraw P2');
+    }
   }
   // draw digit on ctx at x,y
   DrawDigit(ctx, x, y, digit) {
-    let blk = SCORE_SIZE;
 
     // mseg helper draws "matrix segments"
     function mseg(sx, sy, sw, sh) {

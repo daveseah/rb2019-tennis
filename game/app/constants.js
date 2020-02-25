@@ -8,6 +8,7 @@ const X_SCORE = 0.5; // score height multiplier
 const X_GAP = 1.5; // the "hole" at top/bottom in ball units
 const BALL_COLOR = '#FFFFFF';
 const PADDLE_COLOR = '#222';
+const FIELD_COLOR = '#000000';
 
 // other constants
 let CONSTANTS = {
@@ -26,6 +27,7 @@ let CONSTANTS = {
   KEY_DOWN: 40,
   BALL_COLOR,
   PADDLE_COLOR,
+  FIELD_COLOR,
   PADDLE_HOLE: X_GAP, // "unreachable" paddle area (multiple of ball size)
   PADDLE_INPUT_MIN: 0, // minimum DEVICE units to clamp input
   PADDLE_INPUT_MAX: 29000 // maximum DEVICE units to clamp input

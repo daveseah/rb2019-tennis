@@ -12,9 +12,11 @@ class Ball {
   constructor() {
     this.size = BALL_SIZE;
     this.speed = BALL_SPEED;
-    this.x = null;
-    this.y = null;
-    this.vel = null;
+    this.x = 0;
+    this.y = 0;
+    this.oldX = 0;
+    this.oldY = 0;
+    this.vel = 0;
   }
   Serve(side) {
     if (typeof side !== 'number') throw Error('arg1 should be 1 or -1');
@@ -34,6 +36,8 @@ class Ball {
   Update(state) {
     let { P1, P2 } = state;
     // update position with current velocity
+    this.oldX = this.x;
+    this.oldY = this.y;
     this.x += this.vel.x;
     this.y += this.vel.y;
     // check if out of the canvas in the y direction
@@ -71,6 +75,9 @@ class Ball {
         return 'WIN P1';
       }
     }
+  }
+  Clear(ctx) {
+    ctx.fillRect(this.oldX - 1, this.oldY - 1, this.size + 2, this.size + 2);
   }
   Draw(ctx) {
     ctx.fillRect(this.x, this.y, this.size, this.size);
