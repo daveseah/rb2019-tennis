@@ -1,6 +1,6 @@
 // display and gameplay tuning
-const WIDTH = 800; // native projector width in pixels
-const ASPECT = 4 / 3; // aspect ratio (usuallyl 4/3 or 16/9)
+const WIDTH = 1920; // native projector width in pixels
+const ASPECT = 36 / 24; // aspect ratio (usuallyl 4/3 or 16/9)
 const PADDLE_UNITS = 7; // height of paddle in BALL units
 const SCORE_MAX = 10; // maximum score
 const X_SPEED = 0.5; // ball speed multiplier (do not exceed 2.5)
