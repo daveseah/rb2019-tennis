@@ -59,7 +59,7 @@ class Scoreboard {
     this.framecounter++;
     // first draw
     if (this.framecounter === 1) {
-      console.log('scoredraw init');
+      if (DBG) console.log('scoredraw init');
       this.DrawDigit(ctx, SCORE_X1, SCORE_Y, this.scoreP1);
       this.DrawDigit(ctx, SCORE_X2, SCORE_Y, this.scoreP2);
       return;
@@ -73,11 +73,11 @@ class Scoreboard {
     if (x > X2B) return;
     if ((x > X1A) && (x < X1B)) {
       this.DrawDigit(ctx, SCORE_X1, SCORE_Y, this.scoreP1);
-      console.log('scoredraw P1');
+      if (DBG) console.log('scoredraw P1');
     }
     if ((x > X2A) && (x < X2B)) {
       this.DrawDigit(ctx, SCORE_X2, SCORE_Y, this.scoreP2);
-      console.log('scoredraw P2');
+      if (DBG) console.log('scoredraw P2');
     }
   }
   // draw digit on ctx at x,y

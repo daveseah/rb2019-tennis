@@ -32,6 +32,7 @@ class Net {
         }
         // checked draw
         if ((ball.x > NET_X - BALL_SIZE_2) && (ball.x < NET_X + NET_WIDTH + BALL_SIZE_2)) {
+            if (DBG) console.log("net redraw");
             const BY = ball.y;
             for (let y = 0; y < HEIGHT; y += NET_STEP) {
                 if ((BY > y - BALL_SIZE) && (BY < y + BALL_SIZE_2))
