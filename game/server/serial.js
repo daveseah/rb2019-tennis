@@ -1,12 +1,13 @@
 const CONFIG = {
-  SRI: { COM1: '/dev/tty.usbmodem14201', COM2: '', BAUDRATE: 115200 },
-  EXHIBIT: { COM1: '/dev/cu.usbserial-1410', BAUDRATE: 115200 }
+  SRI: { COM1: '/dev/tty.usbmodem14201', COM2: '', BAUDRATE: 115200, RAW: false },
+  PI4: { COM1: '/dev/ttyACM0', COM2: '', BAUDRATE: 115200, RAW: true },
+  EXHIBIT: { COM1: '/dev/cu.usbserial-1410', BAUDRATE: 115200, RAW: true }
 };
 
 const DBG = false;
 
 // select configuration
-const { COM1, COM2, INPUT_SCALE, BAUDRATE } = CONFIG['SRI'];
+const { COM1, COM2, BAUDRATE, RAW } = CONFIG['PI4'];
 
 // libraries
 const WebSocket = require('ws');
@@ -22,14 +23,16 @@ let CLIENT_ID_COUNTER = 0;
 // greeting
 console.log('SERVER ! STARTING');
 
+// determine mode
+const PADDLE_OUT = RAW ? m_SendPaddleRAW : m_SendPaddleJSON;
 // Initialize Communications
 if (COM1) {
   SERIAL_P1 = new ArduinoPaddle(COM1, BAUDRATE);
-  SERIAL_P1.Connect(m_SendPaddleJSON);
+  SERIAL_P1.Connect(PADDLE_OUT, { raw: RAW });
 }
 if (COM2) {
   SERIAL_P2 = new ArduinoPaddle(COM2, BAUDRATE);
-  SERIAL_P2.Connect(m_SendPaddleJSON);
+  SERIAL_P2.Connect(PADDLE_OUT, { raw: RAW });
 }
 // send to all clients
 function m_SendPaddleJSON(input) {

@@ -17,7 +17,7 @@ class ArduinoPaddle {
       console.log(`${this.port} has no listener`);
     };
   }
-  Connect(listener, rawMode = false) {
+  Connect(listener, mode = { raw: false }) {
     if (!this.path) {
       console.log('SERIAL ! error:\n', '       ', 'serial port path not defined');
       return;
@@ -29,7 +29,7 @@ class ArduinoPaddle {
       }
       this.HandleConnect(err);
     });
-    this.rawMode = rawMode;
+    this.rawMode = mode.raw;
     if (typeof listener === 'function') this.listener = listener;
   }
   HandleConnect() {

@@ -8,10 +8,10 @@
     "server": "npm run controlserver",
     "displayserver": "parcel serve app/index.html --port 3000",
     "controlserver": "node server/serial.js",
-    "list:ports": "./node_modules/@serialport/list/lib/list.js"
+    "list:ports": "./node_modules/@serialport/list/lib/index.js"
   },
   "keywords": [],
-  "author": "RBD",
+  "author": "RBD New Hampshire",
   "repository": {
   "type": "git",
   "url": "https://github.com/daveseah/bp2019-tennis"
