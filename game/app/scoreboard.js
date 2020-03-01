@@ -7,11 +7,15 @@ const CLEAR_LEFT = BALL_SIZE * 2;
 const CLEAR_RIGHT = BALL_SIZE * 4;
 const blk = SCORE_SIZE;
 const YTOP = SCORE_Y - BALL_SIZE;
-const YBOT = SCORE_Y + SCORE_SIZE * 8 + BALL_SIZE * 2;
+const YBOT = SCORE_Y + SCORE_SIZE * 8 + BALL_SIZE;
 const X1A = SCORE_X1 - CLEAR_LEFT;
 const X1B = X1A + SCORE_SIZE * 4 + CLEAR_RIGHT;
 const X2A = SCORE_X2 - CLEAR_LEFT;
 const X2B = X2A + SCORE_SIZE * 4 + CLEAR_RIGHT;
+
+console.log('YTOP', YTOP, 'YBOT', YBOT);
+console.log('X1A', X1A, 'X1B', X1B);
+console.log('X2A', X2A, 'X2B', X2B);
 
 /// CLASS: Scoreboard /////////////////////////////////////////////////////////
 /// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -64,20 +68,27 @@ class Scoreboard {
       this.DrawDigit(ctx, SCORE_X2, SCORE_Y, this.scoreP2);
       return;
     }
+
     // otherwise draw
     const x = ball.x;
     const y = ball.y;
-    if (y > YBOT) return;
-    if (y < YTOP) return;
-    if (x < X1A) return;
-    if (x > X2B) return;
+
+    if (DBG) {
+      ctx.strokeRect(X1A, YTOP, X1B - X1A, YBOT - YTOP);
+      ctx.strokeRect(X2A, YTOP, X2B - X2A, YBOT - YTOP);
+    }
+
+    if (y < YTOP) { if (DBG) console.log('reject YTOP'); return; }
+    if (y > YBOT) { if (DBG) console.log('reject YBOT'); return; }
+    if (x < X1A) { if (DBG) console.log('reject X1A'); return; }
+    if (x > X2B) { if (DBG) console.log('reject X2B'); return; }
     if ((x > X1A) && (x < X1B)) {
       this.DrawDigit(ctx, SCORE_X1, SCORE_Y, this.scoreP1);
-      if (DBG) console.log('scoredraw P1');
+      if (DBG) console.log('draw [X1A X1B]');
     }
     if ((x > X2A) && (x < X2B)) {
       this.DrawDigit(ctx, SCORE_X2, SCORE_Y, this.scoreP2);
-      if (DBG) console.log('scoredraw P2');
+      if (DBG) console.log('draw [X2A X2B]');
     }
   }
   // draw digit on ctx at x,y
