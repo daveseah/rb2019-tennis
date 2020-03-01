@@ -13,21 +13,27 @@ const {
 /// CLASS: Paddle /////////////////////////////////////////////////////////////
 /// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 class Paddle {
-  constructor(options) {
+  constructor(options, ball) {
     let { side } = options;
     this.width = BALL_SIZE;
     this.height = BALL_SIZE * PADDLE_UNITS;
     this.side = side;
     this.y = (HEIGHT - this.height) / 2;
+    this.ball = ball;
+    this.oldY = 0;
     if (this.side === 0) throw Error('must pick side');
     if (this.side < 0) this.x = Math.abs(this.side) * BALL_SIZE;
     if (this.side > 0) this.x = WIDTH - Math.abs(this.side * 2) * BALL_SIZE;
   }
   Update(state) {
     const { keystate, pad0, pad1 } = state;
+    this.oldY = this.y;
     // keystate is an array indexed by charcode
     // pad0 is player 1 (left)
     // pad1 is player 2 (right)
+  }
+  Clear(ctx) {
+    ctx.fillRect(this.x, this.oldY - BALL_SIZE, this.width, this.height + BALL_SIZE + BALL_SIZE);
   }
   Draw(ctx) {
     ctx.fillRect(this.x, this.y, this.width, this.height);
@@ -42,6 +48,7 @@ class Player extends Paddle {
   }
   //
   Update(state) {
+    super.Update(state);
     const { keystate, paddle, ball, autotrack = 0.1, twitch = 0 } = state;
     if (keystate) {
       if (keystate[KEY_UP]) this.y -= 7;

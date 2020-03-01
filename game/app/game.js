@@ -13,6 +13,7 @@ const DBG = false;
 const { Player, AIPlayer } = require('./controllers');
 const { Ball } = require('./ball');
 const { Scoreboard } = require('./scoreboard');
+const { Net } = require('./net');
 
 // LOAD MODULES ///////////////////////////////////////////////////////////////
 /// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -31,16 +32,23 @@ const {
   PADDLE_INPUT_MAX,
   PADDLE_HOLE,
   BALL_COLOR,
-  PADDLE_COLOR
+  PADDLE_COLOR,
+  FIELD_COLOR
 } = require('./constants');
+const BALL_SIZE_2 = BALL_SIZE * 2;
+const NET_X = (WIDTH - NET_WIDTH) * 0.5;
+const NET_STEP = HEIGHT / 20;
+
 let INPUTS = {};
 
 /// CREATE PIECES /////////////////////////////////////////////////////////////
 /// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-let P1 = new Player({ side: -1 });
-let P2 = new Player({ side: 1 });
-let BALL = new Ball();
-let SCOREBOARD = new Scoreboard();
+const BALL = new Ball();
+const SCOREBOARD = new Scoreboard(BALL);
+const P1 = new Player({ side: -1 }, BALL);
+const P2 = new Player({ side: 1 }, BALL);
+const NET = new Net();
+// control variables
 let ADVANTAGE = 1;
 let SPAZ_P1 = 0; // LEFT
 let SPAZ_P2 = 0; // RIGHT
@@ -105,6 +113,7 @@ function Init() {
   INPUTS = {};
   SCOREBOARD.Reset();
   ADVANTAGE = 1 - ADVANTAGE;
+  document.body.style.background = FIELD_COLOR;
 }
 
 /// START //////////////////////////////////////////////////////////////////////
@@ -158,29 +167,26 @@ function Update() {
 
 /// DRAW //////////////////////////////////////////////////////////////////////
 /// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+let flipper = 0;
 function Draw(ctx) {
   // clear the playfield
-  ctx.fillRect(0, 0, WIDTH, HEIGHT);
-  ctx.save();
+  ctx.fillStyle = FIELD_COLOR;
+  BALL.Clear(ctx);
+  P1.Clear(ctx);
+  P2.Clear(ctx);
   // draw game elements
-  ctx.fillStyle = BALL_COLOR;
-  BALL.Draw(ctx);
   ctx.fillStyle = PADDLE_COLOR;
   P1.Draw(ctx);
   P2.Draw(ctx);
   // draw the score
   ctx.fillStyle = BALL_COLOR;
-  SCOREBOARD.Draw(ctx);
+  BALL.Draw(ctx);
+  SCOREBOARD.Draw(ctx, BALL);
   // draw the net
-  var w = NET_WIDTH;
-  var x = (WIDTH - w) * 0.5;
-  var y = 0;
-  var step = HEIGHT / 20; // how many net segments
-  while (y < HEIGHT) {
-    ctx.fillRect(x, y + step * 0.25, w, step * 0.5);
-    y += step;
-  }
-  ctx.restore();
+  NET.Draw(ctx, BALL);
+  // flip
+  flipper += 1;
+  if (flipper > 2) flipper = 0;
 }
 
 /// SCORE //////////////////////////////////////////////////////////////////////

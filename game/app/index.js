@@ -21,6 +21,7 @@ const m_socket_url = ALT_SOCKET_ON ? ALT_SOCKET : `ws://${location.hostname}`;
 const m_socket_port = 8080;
 let m_socket;
 let m_timer;
+let m_step;
 // module-wide shared constants
 const { WIDTH, HEIGHT } = require('./constants');
 
@@ -48,11 +49,11 @@ function boot_CreateCanvas() {
 function boot_ConnectKeyboard() {
   // keep track of keyboard presses
   m_keystate = {};
-  document.addEventListener('keydown', function(evt) {
+  document.addEventListener('keydown', function (evt) {
     m_keystate[evt.keyCode] = true;
     GAME.SetInputs(m_keystate);
   });
-  document.addEventListener('keyup', function(evt) {
+  document.addEventListener('keyup', function (evt) {
     delete m_keystate[evt.keyCode];
     GAME.SetInputs(m_keystate);
   });
@@ -97,7 +98,8 @@ function boot_StartGameWithSocketConnect() {
     // initialize the game
     Send({ info: 'test client->server connection' });
     InitGame();
-    StepGame();
+    StepGame(0); // m_step = setInterval(StepGame, 1000 / 30);
+
   };
 
   // case 2: server isn't running, so alert and retry
@@ -160,10 +162,10 @@ function InitGame() {
 /// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 /*/ Start game loop
 /*/
-function StepGame() {
-  GAME.Update();
+function StepGame(timeMS) {
+  GAME.Update(timeMS);
   GAME.Draw(m_ctx);
-  window.requestAnimationFrame(StepGame, m_canvas);
+  window.requestAnimationFrame(StepGame);
 }
 function Reboot() {
   clearInterval(m_timer);
@@ -176,13 +178,13 @@ function Reboot() {
 /// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 if (module.hot) {
   // warn server that client is reloading
-  module.hot.dispose(function() {
+  module.hot.dispose(function () {
     Send({ info: 'client reloaded' });
   });
   // reload the entire page to keep multiple
   // index.js instances from running until
   // code is completely modularized
-  module.hot.accept(function() {
+  module.hot.accept(function () {
     setTimeout(() => {
       window.location.reload();
     });
