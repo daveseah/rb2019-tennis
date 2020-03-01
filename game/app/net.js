@@ -9,6 +9,9 @@ const NET_STEP = HEIGHT / 20;
 const YGAP = NET_STEP * 0.25;
 const YDASH = NET_STEP * 0.5;
 
+const NET_LEFT = NET_X - BALL_SIZE_2;
+const NET_RIGHT = NET_X + NET_WIDTH + BALL_SIZE_2;
+
 /// CLASS: Scoreboard /////////////////////////////////////////////////////////
 /// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 class Net {
@@ -30,8 +33,11 @@ class Net {
             }
             return;
         }
+        if (DBG) {
+            ctx.strokeRect(NET_LEFT, 0, NET_RIGHT - NET_LEFT, HEIGHT);
+        }
         // checked draw
-        if ((ball.x > NET_X - BALL_SIZE_2) && (ball.x < NET_X + NET_WIDTH + BALL_SIZE_2)) {
+        if ((ball.x > NET_LEFT) && (ball.x < NET_RIGHT)) {
             if (DBG) console.log("net redraw");
             const BY = ball.y;
             for (let y = 0; y < HEIGHT; y += NET_STEP) {

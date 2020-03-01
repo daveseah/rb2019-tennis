@@ -15,10 +15,11 @@ DIGITAL PIN5
     VCC = RIGHT
 ```
 
-## Prepping Arduino
+## Prepping Arduino - delta paddle control
 
-Load `arduino/controller-paddle.ino` into the IDE.
+Use `arduino/controller-delta-paddle.ino`
 Plugin the Arduino board you're using.
 Send code to the board.
 Turn on SERIAL MONITOR to debug.
 Twiddle knob to see encoder values changing.
+

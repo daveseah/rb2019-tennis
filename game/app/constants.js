@@ -11,6 +11,7 @@ if (HEIGHT > HD_HEIGHT) {
 }
 // gameplay tuning
 const PADDLE_UNITS = 7; // height of paddle in BALL units
+const PADDLE_SCALING = 0.25; // how sensitive (lower is less sensitive)
 const SCORE_MAX = 10; // maximum score
 const X_SPEED = 0.5; // ball speed multiplier (do not exceed 2.5)
 const X_SCORE = 0.5; // score height multiplier
@@ -19,12 +20,14 @@ const BALL_COLOR = '#00FF00';
 const PADDLE_COLOR = '#00FF00';
 const FIELD_COLOR = '#002000';
 
+
 // other constants
 let CONSTANTS = {
   PI: Math.PI,
   WIDTH,
   HEIGHT,
   PADDLE_UNITS,
+  PADDLE_SCALING,
   SCORE_MAX,
   NET_WIDTH: 4,
   BALL_SPEED: null, // calculated below
@@ -32,14 +35,14 @@ let CONSTANTS = {
   MATRIX_H: 8, // 8 segments tall (0-7)
   BALL_SIZE: null, // calculated below
   SCORE_SIZE: null, // calculated below
-  KEY_UP: 38,
-  KEY_DOWN: 40,
+  KEY_UP: 38, // arrow up
+  KEY_DOWN: 40, // arrow down
   BALL_COLOR,
   PADDLE_COLOR,
   FIELD_COLOR,
   PADDLE_HOLE: X_GAP, // "unreachable" paddle area (multiple of ball size)
-  PADDLE_INPUT_MIN: 0, // minimum DEVICE units to clamp input
-  PADDLE_INPUT_MAX: 29000 // maximum DEVICE units to clamp input
+  PADDLE_INPUT_MIN: 0,
+  PADDLE_INPUT_MAX: null // calculated below
 };
 
 // relative constants based on screen size and ball size
@@ -47,6 +50,8 @@ CONSTANTS.BALL_SPEED = Math.floor((CONSTANTS.WIDTH / 100) * X_SPEED);
 CONSTANTS.BALL_SIZE = Math.floor(CONSTANTS.HEIGHT / 60);
 CONSTANTS.NET_WIDTH = Math.floor(CONSTANTS.WIDTH / 200);
 CONSTANTS.SCORE_SIZE = Math.floor(CONSTANTS.BALL_SIZE * X_SCORE);
+CONSTANTS.PADDLE_INPUT_MAX = HEIGHT - PADDLE_UNITS * CONSTANTS.BALL_SIZE;
+
 
 // screen-relative positionin of scores
 const half = Math.floor(CONSTANTS.WIDTH / 2);
