@@ -163,7 +163,7 @@ function InitGame() {
 /*/ Start game loop
 /*/
 function StepGame(timeMS) {
-  GAME.Update();
+  GAME.Update(timeMS);
   GAME.Draw(m_ctx);
   window.requestAnimationFrame(StepGame);
 }
