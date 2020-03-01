@@ -1,20 +1,29 @@
-// display and gameplay tuning
-const WIDTH = 1920; // native projector width in pixels
+// display tuning
+const HD_WIDTH = 1280; // native projector width in pixels
+const HD_HEIGHT = 720; // native projector height in pixels 
 const ASPECT = 36 / 24; // aspect ratio (usuallyl 4/3 or 16/9)
+let WIDTH = HD_WIDTH;
+let HEIGHT = HD_WIDTH / ASPECT;
+if (HEIGHT > HD_HEIGHT) {
+  const shrink = HD_HEIGHT / HEIGHT;
+  HEIGHT = HD_HEIGHT;
+  WIDTH = Math.floor(WIDTH * shrink);
+}
+// gameplay tuning
 const PADDLE_UNITS = 7; // height of paddle in BALL units
 const SCORE_MAX = 10; // maximum score
 const X_SPEED = 0.5; // ball speed multiplier (do not exceed 2.5)
 const X_SCORE = 0.5; // score height multiplier
 const X_GAP = 1.5; // the "hole" at top/bottom in ball units
-const BALL_COLOR = '#FFFFFF';
-const PADDLE_COLOR = '#222';
-const FIELD_COLOR = '#000000';
+const BALL_COLOR = '#00FF00';
+const PADDLE_COLOR = '#00FF00';
+const FIELD_COLOR = '#002000';
 
 // other constants
 let CONSTANTS = {
   PI: Math.PI,
   WIDTH,
-  HEIGHT: WIDTH / ASPECT, // 4:3 TV ASPECT,
+  HEIGHT,
   PADDLE_UNITS,
   SCORE_MAX,
   NET_WIDTH: 4,

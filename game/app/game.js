@@ -113,6 +113,7 @@ function Init() {
   INPUTS = {};
   SCOREBOARD.Reset();
   ADVANTAGE = 1 - ADVANTAGE;
+  document.body.style.background = FIELD_COLOR;
 }
 
 /// START //////////////////////////////////////////////////////////////////////
