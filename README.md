@@ -30,7 +30,7 @@ Get the Repo:
 One-time configuration the web client development software:
 
 - `npm ci`
-- if you are using nvm, type `nvm use`
+- if you are using nvm, type `nvm use`. You may want to set the system default with `nvm alias default v10.19.0` or something similar
 
 ### Run the Game Server
 
@@ -59,7 +59,7 @@ Open a SECOND TERMINAL WINDOW, then:
 - Make sure you are in the `bp2019-pong/game` directory
 - `npm run client`
 - Open Chrome and browse to `localhost:3000`
-- Twiddle the encoder knob to see if the paddle moves
+- Twiddle the encodelsb_r knob to see if the paddle moves
 - Click on the play field to enable sound (this is a browser-enforced requirement)
 
 The game runs in an attract mode, AI players that take turns beating each other. If an Arduino paddle controller is moved, however, it will take over the player. When a player reachers 9 points, the game is over and the player reverts to AI control unless the Arduino paddle is again moved.
