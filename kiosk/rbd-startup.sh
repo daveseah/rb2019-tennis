@@ -22,9 +22,10 @@ unclutter -idle 0.5 -root &
 sed -i 's/"exited_cleanly":false/"exited_cleanly":true/' /home/pi/.config/chromium/Default/Preferences
 sed -i 's/"exit_type":"Crashed"/"exit_type":"Normal"/' /home/pi/.config/chromium/Default/Preferences
 
-cd RalphBaerDay/bp2019-tennis/game
+cd ~pi/RalphBaerDay/bp2019-tennis/game
 npm run server &
 npm run client &
+sleep 10s
 /usr/bin/chromium-browser --no-first-run --noerrdialogs --disable-infobars --kiosk http://localhost:3000 &
 
 # to test: sh ./rbd-startup
