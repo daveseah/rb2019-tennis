@@ -1,7 +1,7 @@
 ## DEVELOPMENT LOG
 
 #### SATURDAY FEB 9 2019
-
+ 
 I am grabbing the source code from here:
 https://www.youtube.com/watch?v=KApAJhkkqkA
 which provides this annotated source:
@@ -71,3 +71,17 @@ MANANGER -> PIECE -> VIEW
 CONTROLLER/AI -> PIECE/VIEW
 
 I've rewritten the game loop to take this into account.
+
+## SUNDAY MARCH 1 2020
+
+I just merged optimizations for running on a Pi 4.
+
+Now, to scale things better with the paddle. There's two parts:
+1. converted the arduino to send DIFFs
+
+## WEDNESDAY MARCH 4 2020
+
+working on the auto kiosk startup. It isn't particularly straightforward, but I have an idea of what it should do.
+We need to startup the server. Can we do it as one things?
+
+

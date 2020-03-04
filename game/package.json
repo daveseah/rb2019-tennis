@@ -13,8 +13,8 @@
   "keywords": [],
   "author": "RBD New Hampshire",
   "repository": {
-  "type": "git",
-  "url": "https://github.com/daveseah/bp2019-tennis"
+    "type": "git",
+    "url": "https://github.com/daveseah/bp2019-tennis"
   },
   "license": "ISC",
   "dependencies": {

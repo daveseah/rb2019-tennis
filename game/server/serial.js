@@ -1,7 +1,6 @@
 const CONFIG = {
   SRI: { COM1: '/dev/tty.usbmodem14201', COM2: '', BAUDRATE: 115200, RAW: false },
-  PI4: { COM1: '/dev/ttyACM0', COM2: '', BAUDRATE: 115200, RAW: true },
-  EXHIBIT: { COM1: '/dev/cu.usbserial-1410', BAUDRATE: 115200, RAW: true }
+  PI4: { COM1: '/dev/ttyUSB0', COM2: '/dev/ttyUSB1', BAUDRATE: 115200, RAW: true },
 };
 
 const DBG = false;
