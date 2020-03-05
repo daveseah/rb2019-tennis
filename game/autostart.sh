@@ -2,34 +2,40 @@
 # kiosk mode: https://jonathanmh.com/raspberry-pi-4-kiosk-wall-display-dashboard/
 # script control: https://spin.atomicobject.com/2017/08/24/start-stop-bash-background-process/
 #
-# 1. Copy this file to ~pi/rbd-startup.sh and chmod +x it
-# 2. Then setup dashboard.service file to point to it
-#    sudo nano /etc/systemd/system/dashboard.service
-#    See example 'dashboard.service-ex'
-# 3. Test with ./rbd-startup.sh
-# 4. If it works, then
-#    systemctl enable dashboard.service
-# 5. Reboot to see if it works
+# see kiosk-mode.md for a description
 
+# ctrl-c will kill all processes spawned by this script
 trap "kill 0" EXIT
 
+# disable monitor screen saving
 xset s noblank
 xset s off
 xset -dpms
 
+# disable mouse cursor
 unclutter -idle 0.5 -root &
 
+# rewrite chromium confirmation to not throw messy errors
 sed -i 's/"exited_cleanly":false/"exited_cleanly":true/' /home/pi/.config/chromium/Default/Preferences
 sed -i 's/"exit_type":"Crashed"/"exit_type":"Normal"/' /home/pi/.config/chromium/Default/Preferences
 
-cd ~pi/RalphBaerDay/bp2019-tennis/game
+# run the game client and server
+cd /home/pi/RBD/btt2020/game/
+
 npm run server &
 npm run client &
+
+# wait for the servers to spool up
 sleep 10s
+
+# launch chromium in kiosk mode
 /usr/bin/chromium-browser --no-first-run --noerrdialogs --disable-infobars --kiosk http://localhost:3000 &
 
-# to test: sh ./rbd-startup
-# systemctl start dashboard.service to enable
-# systemctl stop dashboard.service
+# (1) test that this script works
+# (2) see kiosk-mode.md for details on adding systemd service
+# (3) systemctl start rbd.service
 
+# wait for all processes to complete, which never happens
+# since they don't ever complete, waiting just makes it easier to
+# debug this script
 wait

@@ -12,24 +12,21 @@ That said, here's how you can install it on a Pi4. My test pi was a 4GB machine.
 * power-on system to boot
 * pick "install raspbian full"
 
-## Install Visual Studio Code for Raspberry Pi
+## Initial Configuration
 
-Someone has compiled a [build of VSC](https://pimylifeup.com/raspberry-pi-visual-studio-code/)! Instructions at link. However, you don't need to install it if you use **Remote Editing** (see below).
+* connect to wifi, update os, configure locale
+* optionally set screen configuration -> resolution
+* in prefs, change hostname to `rbd01` and enable ssh.
+* reboot when prompted
 
 ## Remote Editing with Visual Studio Code
 You can [remote edit files remote](https://code.visualstudio.com/docs/remote/ssh) on other hosts via SSH!
-The hostname of the raspberry pi is `hostname`. I [edited the hostname](https://thepihut.com/blogs/raspberry-pi-tutorials/19668676-renaming-your-raspberry-pi-the-hostname) to be rbd01.
-Current machines use [mDNS](https://en.wikipedia.org/wiki/Multicast_DNS) to resolve hostnames. It is of the form `hostname.local`. 
+Raspbian uses [mDNS](https://en.wikipedia.org/wiki/Multicast_DNS) to resolve hostnames, so it is reachable on the local net as `rbd01.local`.
 
-### 1. Enable SSH
-Go to Raspberry Pi Config and enable the SSH interface.
+On your Mac, install the Remote-SSH extension (the latest stable version; there may be several preview versions), then follow the instructions for [adding a remote](https://code.visualstudio.com/docs/remote/ssh).
 
-### 2. Configure Visual Studio Code
-
-On your host machine, install the Remote-SSH extension (the latest stable version; there may be several preview versions), then follow the instructions for [adding a remote](https://code.visualstudio.com/docs/remote/ssh).
-
-* `ssh-keygen -t rsa -b 4096` (do not use passphrase, save as `rbd01_rsa`)
-* `ssh-copy-id -i rbd01_rsa pi@rbd01.local`
+* `ssh-keygen -t rsa -b 4096` (do NOT use passphrase, save as `rbd01_rsa`)
+* `ssh-copy-id -i ~/.ssh/rbd01_rsa pi@rbd01.local`
 
 Then:
 
@@ -41,6 +38,7 @@ Following instructions [here](https://linuxize.com/post/how-to-install-node-js-o
 
 * `curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash`
 * `nvm install v10.19.0`
+* `nvm alias default v10.19.0`
 
 ## Setting up Github Access on Raspberry Pi!
 
@@ -51,10 +49,6 @@ There's no need for the Raspberry Pi to have push access, though if necessary we
 * `npm ci`
 * `npm run server; npm run client`
 
-## Alternative: Install Raspbian on VM
-
-untested
-
-* download iso https://www.raspberrypi.org/downloads/raspberry-pi-desktop/
-* install into virtual box
-
+Next set global username and email for commits.
+* `git config --global user.name "sri_rbd01"`
+* `git config --global user.email "sri.nutmoon@gmail.com"`
