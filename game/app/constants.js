@@ -1,7 +1,7 @@
 // display tuning
-const HD_WIDTH = 1280; // native projector width in pixels
-const HD_HEIGHT = 720; // native projector height in pixels 
-const ASPECT = 36 / 24; // aspect ratio (usuallyl 4/3 or 16/9)
+const HD_WIDTH = 800; // native projector width in pixels
+const HD_HEIGHT = 600; // native projector height in pixels 
+const ASPECT = 4 / 3; // aspect ratio (usuallyl 4/3 or 16/9 or 36/24)
 let WIDTH = HD_WIDTH;
 let HEIGHT = HD_WIDTH / ASPECT;
 if (HEIGHT > HD_HEIGHT) {
